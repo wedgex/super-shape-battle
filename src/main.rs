@@ -21,17 +21,30 @@ impl event::EventHandler for GameState {
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult {
-        graphics::clear(ctx, [0.1, 0.2, 0.3, 1.0].into());
+        graphics::clear(ctx, graphics::BLACK);
 
-        let circle = graphics::Mesh::new_circle(
+        let w = 25.0;
+        let h = 30.0;
+
+        let ship = graphics::Mesh::new_polygon(
             ctx,
-            graphics::DrawMode::fill(),
-            na::Point2::new(self.pos_x, 380.0),
-            100.0,
-            2.0,
+            graphics::DrawMode::stroke(2.0),
+            &[
+                na::Point2::<f32>::new(0.0, h),
+                na::Point2::<f32>::new(w / 2.0, 0.0),
+                na::Point2::<f32>::new(w, h),
+                na::Point2::<f32>::new(w / 2.0, h - (h / 3.0)),
+            ],
             graphics::WHITE,
         )?;
-        graphics::draw(ctx, &circle, (na::Point2::new(0.0, 0.0),))?;
+
+        graphics::draw(
+            ctx,
+            &ship,
+            graphics::DrawParam::default()
+                .rotation(0.0)
+                .dest(na::Point2::new(100.0, 100.0)),
+        )?;
 
         graphics::present(ctx)?;
         Ok(())
