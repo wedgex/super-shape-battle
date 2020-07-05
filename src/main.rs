@@ -105,15 +105,8 @@ impl event::EventHandler for GameState {
             self.ship.decelerate();
         }
 
-        self.ship.velocity += self.ship.acceleration;
-        // accelerating after changing diretions feels odd
-        let max_velocity: f32 = 5.0;
-        if self.ship.velocity.norm_squared() > max_velocity.powi(2) {
-            self.ship.velocity =
-                self.ship.velocity / self.ship.velocity.norm_squared().sqrt() * max_velocity;
-        }
-
-        self.ship.position += self.ship.velocity;
+        handle_acceleration(&mut self.ship);
+        handle_velocity(&mut self.ship);
 
         Ok(())
     }
@@ -125,6 +118,19 @@ impl event::EventHandler for GameState {
 
         Ok(())
     }
+}
+
+const MAX_VELOCITY: f32 = 5.0;
+
+fn handle_acceleration(ship: &mut Ship) {
+    ship.velocity += ship.acceleration;
+    if ship.velocity.norm_squared() > MAX_VELOCITY.powi(2) {
+        ship.velocity = ship.velocity / ship.velocity.norm_squared().sqrt() * MAX_VELOCITY;
+    }
+}
+
+fn handle_velocity(ship: &mut Ship) {
+    ship.position += ship.velocity;
 }
 
 pub fn main() -> GameResult {
