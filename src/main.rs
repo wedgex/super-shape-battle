@@ -60,6 +60,19 @@ impl Ship {
     fn decelerate(&mut self) {
         self.acceleration *= 0.0;
     }
+
+    // turning occasionally seems jumpy
+    fn turn_left(&mut self) {
+        let mut rotation = self.rotation - 0.1;
+        if rotation < 0.0 {
+            rotation += 360.0;
+        }
+        self.rotation = rotation;
+    }
+
+    fn turn_right(&mut self) {
+        self.rotation = (self.rotation + 0.1) % 360.0;
+    }
 }
 
 struct GameState {
@@ -78,17 +91,12 @@ impl GameState {
 
 impl event::EventHandler for GameState {
     fn update(&mut self, ctx: &mut Context) -> GameResult {
-        // turning occasionally seems jumpy
         if keyboard::is_key_pressed(ctx, KeyCode::A) {
-            let mut rotation = self.ship.rotation - 0.1;
-            if rotation < 0.0 {
-                rotation += 360.0;
-            }
-            self.ship.rotation = rotation;
+            self.ship.turn_left();
         }
 
         if keyboard::is_key_pressed(ctx, KeyCode::D) {
-            self.ship.rotation = (self.ship.rotation + 0.1) % 360.0;
+            self.ship.turn_right();
         }
 
         if keyboard::is_key_pressed(ctx, KeyCode::W) {
