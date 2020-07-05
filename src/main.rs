@@ -52,6 +52,14 @@ impl Ship {
 
         Ok(())
     }
+
+    fn accelerate(&mut self) {
+        self.acceleration += 0.01 * Vector2::new(self.rotation.sin(), -self.rotation.cos());
+    }
+
+    fn decelerate(&mut self) {
+        self.acceleration *= 0.0;
+    }
 }
 
 struct GameState {
@@ -84,10 +92,9 @@ impl event::EventHandler for GameState {
         }
 
         if keyboard::is_key_pressed(ctx, KeyCode::W) {
-            self.ship.acceleration +=
-                0.01 * Vector2::new(self.ship.rotation.sin(), -self.ship.rotation.cos());
+            self.ship.accelerate();
         } else {
-            self.ship.acceleration = Vector2::new(0.0, 0.0);
+            self.ship.decelerate();
         }
 
         self.ship.velocity += self.ship.acceleration;
