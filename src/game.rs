@@ -39,6 +39,7 @@ impl event::EventHandler for GameState {
 
     handle_acceleration(&mut self.ship);
     handle_velocity(&mut self.ship);
+    wrap_position(&mut self.ship, ctx);
 
     Ok(())
   }
@@ -63,4 +64,24 @@ fn handle_acceleration(ship: &mut Ship) {
 
 fn handle_velocity(ship: &mut Ship) {
   ship.position += ship.velocity;
+}
+
+fn wrap_position(ship: &mut Ship, context: &Context) {
+  let (screen_width, screen_height) = graphics::drawable_size(context);
+
+  if ship.position.x < 0.0 {
+    ship.position.x += screen_width;
+  }
+
+  if ship.position.x > screen_width {
+    ship.position.x -= screen_width;
+  }
+
+  if ship.position.y < 0.0 {
+    ship.position.y += screen_height;
+  }
+
+  if ship.position.y > screen_height {
+    ship.position.y -= screen_height;
+  }
 }
