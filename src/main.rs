@@ -2,6 +2,7 @@ use ggez::event;
 use ggez::{ContextBuilder, GameResult};
 
 mod game;
+mod shape;
 mod ship;
 
 use game::GameState;
