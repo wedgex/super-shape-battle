@@ -2,19 +2,26 @@ use ggez::event;
 use ggez::event::KeyCode;
 use ggez::graphics;
 use ggez::input::keyboard;
-use ggez::nalgebra::Point2;
+use ggez::nalgebra::{Point2, Vector2};
 use ggez::{Context, ContextBuilder, GameResult};
 
 struct Ship {
     position: Point2<f32>,
     rotation: f32,
+    velocity: Vector2<f32>,
+    acceleration: Vector2<f32>,
 }
 
 impl Ship {
     fn new(position: Point2<f32>) -> Self {
+        let velocity = Vector2::new(0.0, 0.0);
+        let acceleration = Vector2::new(0.0, 0.0);
+
         Ship {
             position,
             rotation: 0.0,
+            velocity,
+            acceleration,
         }
     }
 
@@ -26,10 +33,10 @@ impl Ship {
             context,
             graphics::DrawMode::stroke(2.0),
             &[
-                Point2::<f32>::new(0.0, h),
-                Point2::<f32>::new(w / 2.0, 0.0),
-                Point2::<f32>::new(w, h),
-                Point2::<f32>::new(w / 2.0, h - (h / 3.0)),
+                Point2::new(0.0, h),
+                Point2::new(w / 2.0, 0.0),
+                Point2::new(w, h),
+                Point2::new(w / 2.0, h - (h / 3.0)),
             ],
             graphics::WHITE,
         )?;
@@ -39,7 +46,7 @@ impl Ship {
             &ship,
             graphics::DrawParam::default()
                 .rotation(self.rotation)
-                .offset(Point2::<f32>::new(w / 2.0, h / 2.0))
+                .offset(Point2::new(w / 2.0, h / 2.0))
                 .dest(self.position),
         )?;
 
@@ -54,7 +61,7 @@ struct GameState {
 impl GameState {
     fn new() -> GameResult<GameState> {
         let s = GameState {
-            ship: Ship::new(Point2::<f32>::new(400.0, 400.0)),
+            ship: Ship::new(Point2::new(400.0, 400.0)),
         };
 
         Ok(s)
@@ -63,11 +70,11 @@ impl GameState {
 
 impl event::EventHandler for GameState {
     fn update(&mut self, ctx: &mut Context) -> GameResult {
-        println!("rotation: {}", self.ship.rotation);
+        // turning occasionally seems jumpy
         if keyboard::is_key_pressed(ctx, KeyCode::A) {
             let mut rotation = self.ship.rotation - 0.1;
             if rotation < 0.0 {
-                rotation = rotation + 360.0;
+                rotation += 360.0;
             }
             self.ship.rotation = rotation;
         }
@@ -75,6 +82,23 @@ impl event::EventHandler for GameState {
         if keyboard::is_key_pressed(ctx, KeyCode::D) {
             self.ship.rotation = (self.ship.rotation + 0.1) % 360.0;
         }
+
+        if keyboard::is_key_pressed(ctx, KeyCode::W) {
+            self.ship.acceleration +=
+                0.01 * Vector2::new(self.ship.rotation.sin(), -self.ship.rotation.cos());
+        } else {
+            self.ship.acceleration = Vector2::new(0.0, 0.0);
+        }
+
+        self.ship.velocity += self.ship.acceleration;
+        // accelerating after changing diretions feels odd
+        let max_velocity: f32 = 5.0;
+        if self.ship.velocity.norm_squared() > max_velocity.powi(2) {
+            self.ship.velocity =
+                self.ship.velocity / self.ship.velocity.norm_squared().sqrt() * max_velocity;
+        }
+
+        self.ship.position += self.ship.velocity;
 
         Ok(())
     }
