@@ -1,0 +1,12 @@
+- [x] Display Ship
+- [x] Move Ship
+- [x] Wrap position
+- [ ] Draw Shapes
+- [ ] Fire Bullets
+- [ ] Collisions
+- [ ] Break down shapes
+- [ ] Scoring
+- [ ] Waves of shapes
+- [ ] Lives
+- [ ] Animations
+- [ ] Sounds
