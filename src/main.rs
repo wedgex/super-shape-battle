@@ -4,6 +4,7 @@ use ggez::{ContextBuilder, GameResult};
 mod game;
 mod shape;
 mod ship;
+mod systems;
 
 use game::GameState;
 

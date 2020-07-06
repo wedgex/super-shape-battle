@@ -7,6 +7,7 @@ use ggez::{Context, GameResult};
 
 use super::shape::Shape;
 use super::ship::Ship;
+use super::systems::PhysicsSystem;
 
 pub struct GameState {
   ship: Ship,
@@ -40,9 +41,12 @@ impl event::EventHandler for GameState {
       self.ship.decelerate();
     }
 
-    handle_acceleration(&mut self.ship);
-    handle_velocity(&mut self.ship);
-    wrap_position(&mut self.ship, ctx);
+    PhysicsSystem::update(&mut self.ship, ctx);
+
+    println!(
+      "position {}; acceleration {}; velocity {}",
+      self.ship.position, self.ship.acceleration, self.ship.velocity
+    );
 
     Ok(())
   }
@@ -56,38 +60,5 @@ impl event::EventHandler for GameState {
     graphics::present(ctx)?;
 
     Ok(())
-  }
-}
-
-const MAX_VELOCITY: f32 = 5.0;
-
-fn handle_acceleration(ship: &mut Ship) {
-  ship.velocity += ship.acceleration;
-  if ship.velocity.norm_squared() > MAX_VELOCITY.powi(2) {
-    ship.velocity = ship.velocity / ship.velocity.norm_squared().sqrt() * MAX_VELOCITY;
-  }
-}
-
-fn handle_velocity(ship: &mut Ship) {
-  ship.position += ship.velocity;
-}
-
-fn wrap_position(ship: &mut Ship, context: &Context) {
-  let (screen_width, screen_height) = graphics::drawable_size(context);
-
-  if ship.position.x < 0.0 {
-    ship.position.x += screen_width;
-  }
-
-  if ship.position.x > screen_width {
-    ship.position.x -= screen_width;
-  }
-
-  if ship.position.y < 0.0 {
-    ship.position.y += screen_height;
-  }
-
-  if ship.position.y > screen_height {
-    ship.position.y -= screen_height;
   }
 }

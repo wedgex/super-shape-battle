@@ -2,6 +2,8 @@ use ggez::graphics;
 use ggez::nalgebra::{Point2, Vector2};
 use ggez::{Context, GameResult};
 
+use super::systems::Physics;
+
 pub struct Ship {
   pub position: Point2<f32>,
   rotation: f32,
@@ -69,5 +71,27 @@ impl Ship {
 
   pub fn turn_right(&mut self) {
     self.rotation = (self.rotation + 0.1) % 360.0;
+  }
+}
+
+impl Physics for Ship {
+  fn get_position(&self) -> Point2<f32> {
+    self.position
+  }
+
+  fn get_acceleration(&self) -> Vector2<f32> {
+    self.acceleration
+  }
+
+  fn get_velocity(&self) -> Vector2<f32> {
+    self.velocity
+  }
+
+  fn set_velocity(&mut self, velcoity: Vector2<f32>) {
+    self.velocity = velcoity;
+  }
+
+  fn move_to(&mut self, position: Point2<f32>) {
+    self.position = position;
   }
 }
