@@ -2,7 +2,7 @@ use ggez::event;
 use ggez::event::KeyCode;
 use ggez::graphics;
 use ggez::input::keyboard;
-use ggez::nalgebra::Point2;
+use ggez::nalgebra::{Point2, Vector2};
 use ggez::{Context, GameResult};
 
 use super::shape::Shape;
@@ -16,9 +16,12 @@ pub struct GameState {
 
 impl GameState {
   pub fn new() -> GameResult<GameState> {
+    let mut octagon = Shape::new(Point2::new(100.0, 100.0));
+    octagon.velocity = Vector2::new(1.0, 1.0);
+
     let s = GameState {
       ship: Ship::new(Point2::new(400.0, 400.0)),
-      shapes: vec![Shape::new(Point2::new(100.0, 100.0))],
+      shapes: vec![octagon],
     };
 
     Ok(s)
@@ -43,10 +46,9 @@ impl event::EventHandler for GameState {
 
     PhysicsSystem::update(&mut self.ship, ctx);
 
-    println!(
-      "position {}; acceleration {}; velocity {}",
-      self.ship.position, self.ship.acceleration, self.ship.velocity
-    );
+    for shape in &mut self.shapes {
+      PhysicsSystem::update(shape, ctx);
+    }
 
     Ok(())
   }

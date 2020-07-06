@@ -1,3 +1,4 @@
+use super::systems::Physics;
 use ggez::graphics;
 use ggez::nalgebra::{Point2, Vector2};
 use ggez::{Context, GameResult};
@@ -56,5 +57,27 @@ impl Shape {
     )?;
 
     Ok(())
+  }
+}
+
+impl Physics for Shape {
+  fn get_position(&self) -> Point2<f32> {
+    self.position
+  }
+
+  fn get_acceleration(&self) -> Vector2<f32> {
+    self.acceleration
+  }
+
+  fn get_velocity(&self) -> Vector2<f32> {
+    self.velocity
+  }
+
+  fn set_velocity(&mut self, velcoity: Vector2<f32>) {
+    self.velocity = velcoity;
+  }
+
+  fn move_to(&mut self, position: Point2<f32>) {
+    self.position = position;
   }
 }
