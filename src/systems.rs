@@ -1,9 +1,10 @@
+use super::game::GameState;
 use ggez::graphics;
 use ggez::nalgebra::{Point2, Vector2};
 use ggez::Context;
 
-pub enum System {
-  PhysicsSystem,
+pub trait System {
+  fn update(game: &mut GameState, context: &Context);
 }
 
 pub trait Physics {
@@ -18,12 +19,20 @@ const MAX_VELOCITY: f32 = 5.0;
 
 pub struct PhysicsSystem {}
 
-impl PhysicsSystem {
-  pub fn update(entity: &mut dyn Physics, context: &Context) {
-    handle_acceleration(entity);
-    handle_velocity(entity);
-    wrap_position(entity, context);
+impl System for PhysicsSystem {
+  fn update(game: &mut GameState, context: &Context) {
+    update_entity(&mut game.ship, context);
+
+    for shape in &mut game.shapes {
+      update_entity(shape, context);
+    }
   }
+}
+
+fn update_entity(entity: &mut dyn Physics, context: &Context) {
+  handle_acceleration(entity);
+  handle_velocity(entity);
+  wrap_position(entity, context);
 }
 
 fn handle_acceleration(entity: &mut dyn Physics) {

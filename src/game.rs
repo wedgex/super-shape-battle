@@ -7,11 +7,11 @@ use ggez::{Context, GameResult};
 
 use super::shape::Shape;
 use super::ship::Ship;
-use super::systems::PhysicsSystem;
+use super::systems::{PhysicsSystem, System};
 
 pub struct GameState {
-  ship: Ship,
-  shapes: Vec<Shape>,
+  pub ship: Ship,
+  pub shapes: Vec<Shape>,
 }
 
 impl GameState {
@@ -44,11 +44,7 @@ impl event::EventHandler for GameState {
       self.ship.decelerate();
     }
 
-    PhysicsSystem::update(&mut self.ship, ctx);
-
-    for shape in &mut self.shapes {
-      PhysicsSystem::update(shape, ctx);
-    }
+    PhysicsSystem::update(self, ctx);
 
     Ok(())
   }
