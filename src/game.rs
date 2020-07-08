@@ -18,13 +18,15 @@ impl GameState {
   pub fn new() -> GameResult<GameState> {
     let mut octagon = Shape::octagon(Point2::new(100.0, 100.0));
     let mut hexagon = Shape::hexagon(Point2::new(500.0, 500.0));
+    let mut square = Shape::square(Point2::new(300.0, 200.0));
 
     octagon.velocity = Vector2::new(1.0, 1.0);
     hexagon.velocity = Vector2::new(-1.0, -1.0);
+    square.velocity = Vector2::new(1.0, -1.0);
 
     let s = GameState {
       ship: Ship::new(Point2::new(400.0, 400.0)),
-      shapes: vec![octagon, hexagon],
+      shapes: vec![octagon, hexagon, square],
     };
 
     Ok(s)

@@ -5,6 +5,7 @@ use ggez::{Context, GameResult};
 
 const RED: graphics::Color = graphics::Color::new(255.0, 0.0, 0.0, 1.0);
 const YELLOW: graphics::Color = graphics::Color::new(255.0, 255.0, 0.0, 1.0);
+const GREEN: graphics::Color = graphics::Color::new(0.0, 255.0, 0.0, 1.0);
 
 pub struct Shape {
   pub position: Point2<f32>,
@@ -55,6 +56,16 @@ impl Shape {
       HEXAGON_WIDTH,
       hexagon_points(),
       YELLOW,
+    )
+  }
+
+  pub fn square(position: Point2<f32>) -> Self {
+    Shape::new(
+      position,
+      SQUARE_HEIGHT,
+      SQUARE_WIDTH,
+      square_points(),
+      GREEN,
     )
   }
 
@@ -136,5 +147,19 @@ fn hexagon_points() -> Vec<Point2<f32>> {
     Point2::new(side_length / 2.0, -center_distance),
     Point2::new(-(side_length / 2.0), -center_distance),
     Point2::new(-center_distance, 0.0),
+  ]
+}
+
+const SQUARE_HEIGHT: f32 = 15.0;
+const SQUARE_WIDTH: f32 = 15.0;
+
+fn square_points() -> Vec<Point2<f32>> {
+  let side_length: f32 = 15.0;
+
+  vec![
+    Point2::new(-(side_length / 2.0), 0.0),
+    Point2::new(side_length / 2.0, 0.0),
+    Point2::new(side_length / 2.0, side_length),
+    Point2::new(-(side_length / 2.0), side_length),
   ]
 }
