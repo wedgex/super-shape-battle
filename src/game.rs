@@ -16,12 +16,15 @@ pub struct GameState {
 
 impl GameState {
   pub fn new() -> GameResult<GameState> {
-    let mut octagon = Shape::new(Point2::new(100.0, 100.0));
+    let mut octagon = Shape::octagon(Point2::new(100.0, 100.0));
+    let mut hexagon = Shape::hexagon(Point2::new(500.0, 500.0));
+
     octagon.velocity = Vector2::new(1.0, 1.0);
+    hexagon.velocity = Vector2::new(-1.0, -1.0);
 
     let s = GameState {
       ship: Ship::new(Point2::new(400.0, 400.0)),
-      shapes: vec![octagon],
+      shapes: vec![octagon, hexagon],
     };
 
     Ok(s)
