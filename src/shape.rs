@@ -19,12 +19,14 @@ pub struct Shape {
 
 impl Shape {
   pub fn new(
-    position: Point2<f32>,
+    x: f32,
+    y: f32,
     height: f32,
     width: f32,
     polygon_points: Vec<Point2<f32>>,
     color: graphics::Color,
   ) -> Self {
+    let position = Point2::new(x, y);
     let velocity = Vector2::new(0.0, 0.0);
     let acceleration = Vector2::new(0.0, 0.0);
 
@@ -39,19 +41,14 @@ impl Shape {
     }
   }
 
-  pub fn octagon(position: Point2<f32>) -> Self {
-    Shape::new(
-      position,
-      OCTAGON_HEIGHT,
-      OCTAGON_WIDTH,
-      octagon_points(),
-      RED,
-    )
+  pub fn octagon(x: f32, y: f32) -> Self {
+    Shape::new(x, y, OCTAGON_HEIGHT, OCTAGON_WIDTH, octagon_points(), RED)
   }
 
-  pub fn hexagon(position: Point2<f32>) -> Self {
+  pub fn hexagon(x: f32, y: f32) -> Self {
     Shape::new(
-      position,
+      x,
+      y,
       HEXAGON_HEIGHT,
       HEXAGON_WIDTH,
       hexagon_points(),
@@ -59,14 +56,8 @@ impl Shape {
     )
   }
 
-  pub fn square(position: Point2<f32>) -> Self {
-    Shape::new(
-      position,
-      SQUARE_HEIGHT,
-      SQUARE_WIDTH,
-      square_points(),
-      GREEN,
-    )
+  pub fn square(x: f32, y: f32) -> Self {
+    Shape::new(x, y, SQUARE_HEIGHT, SQUARE_WIDTH, square_points(), GREEN)
   }
 
   pub fn draw(&self, context: &mut Context) -> GameResult {
