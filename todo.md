@@ -1,12 +1,14 @@
 - [x] Display Ship
 - [x] Move Ship
 - [x] Wrap position
-- [ ] Draw Shapes
-- [ ] Fire Bullets
+- [x] Draw Shapes
+- [x] Fire Bullets
 - [ ] Collisions
 - [ ] Break down shapes
 - [ ] Scoring
 - [ ] Waves of shapes
 - [ ] Lives
+- [ ] Clean up bullet start placement
+- [ ] Draw octagon with triangles
 - [ ] Animations
 - [ ] Sounds

@@ -26,6 +26,10 @@ impl System for PhysicsSystem {
     for shape in &mut game.shapes {
       update_entity(shape, context);
     }
+
+    for bullet in &mut game.bullets {
+      update_entity(bullet, context);
+    }
   }
 }
 

@@ -1,12 +1,13 @@
 use ggez::graphics;
 use ggez::nalgebra::{Point2, Vector2};
 use ggez::{Context, GameResult};
+use std::time::Instant;
 
 use super::systems::Physics;
 
 pub struct Ship {
   pub position: Point2<f32>,
-  rotation: f32,
+  pub rotation: f32,
   pub velocity: Vector2<f32>,
   pub acceleration: Vector2<f32>,
 }
@@ -81,6 +82,67 @@ impl Physics for Ship {
 
   fn get_acceleration(&self) -> Vector2<f32> {
     self.acceleration
+  }
+
+  fn get_velocity(&self) -> Vector2<f32> {
+    self.velocity
+  }
+
+  fn set_velocity(&mut self, velcoity: Vector2<f32>) {
+    self.velocity = velcoity;
+  }
+
+  fn move_to(&mut self, position: Point2<f32>) {
+    self.position = position;
+  }
+}
+
+pub struct Bullet {
+  pub position: Point2<f32>,
+  pub velocity: Vector2<f32>,
+  pub created_at: Instant,
+}
+
+impl Bullet {
+  pub fn new(x: f32, y: f32, angle: f32) -> Self {
+    let position = Point2::new(x, y);
+    let velocity = 5.0 * Vector2::new(angle.sin(), -angle.cos());
+    let created_at = Instant::now();
+
+    Bullet {
+      position,
+      velocity,
+      created_at,
+    }
+  }
+
+  pub fn draw(&self, context: &mut Context) -> GameResult {
+    let bullet = graphics::Mesh::new_circle(
+      context,
+      graphics::DrawMode::stroke(2.0),
+      Point2::new(0., 0.),
+      5.0,
+      1.0,
+      graphics::WHITE,
+    )?;
+
+    graphics::draw(
+      context,
+      &bullet,
+      graphics::DrawParam::default().dest(self.position),
+    )?;
+
+    Ok(())
+  }
+}
+
+impl Physics for Bullet {
+  fn get_position(&self) -> Point2<f32> {
+    self.position
+  }
+
+  fn get_acceleration(&self) -> Vector2<f32> {
+    Vector2::new(0.0, 0.0)
   }
 
   fn get_velocity(&self) -> Vector2<f32> {
