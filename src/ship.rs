@@ -1,4 +1,6 @@
-use ggez::graphics;
+use crate::geometry;
+use crate::systems::collision::Collision;
+use ggez::graphics::{self, Color};
 use ggez::nalgebra::{Point2, Vector2};
 use ggez::{Context, GameResult};
 use std::time::Instant;
@@ -10,18 +12,24 @@ pub struct Ship {
   pub rotation: f32,
   pub velocity: Vector2<f32>,
   pub acceleration: Vector2<f32>,
+  points: Vec<Point2<f32>>,
+  color: Color,
 }
 
 impl Ship {
   pub fn new(position: Point2<f32>) -> Self {
     let velocity = Vector2::new(0.0, 0.0);
     let acceleration = Vector2::new(0.0, 0.0);
+    let points = ship_points();
+    let color = graphics::WHITE;
 
     Ship {
       position,
       rotation: 0.0,
       velocity,
       acceleration,
+      points,
+      color,
     }
   }
 
@@ -32,13 +40,8 @@ impl Ship {
     let ship = graphics::Mesh::new_polygon(
       context,
       graphics::DrawMode::stroke(2.0),
-      &[
-        Point2::new(0.0, h),
-        Point2::new(w / 2.0, 0.0),
-        Point2::new(w, h),
-        Point2::new(w / 2.0, h - (h / 3.0)),
-      ],
-      graphics::WHITE,
+      &self.points,
+      self.color,
     )?;
 
     graphics::draw(
@@ -95,6 +98,34 @@ impl Physics for Ship {
   fn move_to(&mut self, position: Point2<f32>) {
     self.position = position;
   }
+}
+
+impl Collision for Ship {
+  fn points(&self) -> Vec<Point2<f32>> {
+    let mut points = self.points.clone();
+    geometry::translate_points(&mut points, self.position);
+    points
+  }
+
+  fn position(&self) -> Point2<f32> {
+    self.position
+  }
+
+  fn collision(&mut self) {
+    //self.color.a -= 0.1;
+  }
+}
+
+fn ship_points() -> Vec<Point2<f32>> {
+  let w = 25.0;
+  let h = 30.0;
+
+  vec![
+    Point2::new(0.0, h),
+    Point2::new(w / 2.0, 0.0),
+    Point2::new(w, h),
+    Point2::new(w / 2.0, h - (h / 3.0)),
+  ]
 }
 
 pub struct Bullet {

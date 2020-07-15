@@ -1,4 +1,6 @@
 use super::systems::Physics;
+use crate::geometry;
+use crate::systems::collision::Collision;
 use ggez::graphics;
 use ggez::nalgebra::{Point2, Vector2};
 use ggez::{Context, GameResult};
@@ -118,4 +120,20 @@ fn hexagon_points() -> Vec<Point2<f32>> {
 
 fn square_points() -> Vec<Point2<f32>> {
   polygon_points(4, 15.0, 45.0)
+}
+
+impl Collision for Shape {
+  fn points(&self) -> Vec<Point2<f32>> {
+    let mut points = self.points.clone();
+    geometry::translate_points(&mut points, self.position);
+    points
+  }
+
+  fn position(&self) -> Point2<f32> {
+    self.position
+  }
+
+  fn collision(&mut self) {
+    self.color.a -= 0.1;
+  }
 }

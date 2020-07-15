@@ -5,9 +5,9 @@ use ggez::input::keyboard;
 use ggez::nalgebra::{Point2, Vector2};
 use ggez::{Context, GameResult};
 
-use super::shape::Shape;
-use super::ship::{Bullet, Ship};
-use super::systems::{PhysicsSystem, System};
+use crate::shape::Shape;
+use crate::ship::{Bullet, Ship};
+use crate::systems::{collision::CollisionSystem, PhysicsSystem, System};
 use std::time::Instant;
 
 const BULLET_TIME_SECS: u64 = 2;
@@ -70,6 +70,7 @@ impl event::EventHandler for GameState {
     }
 
     PhysicsSystem::update(self, ctx);
+    CollisionSystem::update(self, ctx);
 
     self.bullets = self
       .bullets

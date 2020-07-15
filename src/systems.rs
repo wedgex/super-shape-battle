@@ -3,6 +3,8 @@ use ggez::graphics;
 use ggez::nalgebra::{Point2, Vector2};
 use ggez::Context;
 
+pub mod collision;
+
 pub trait System {
   fn update(game: &mut GameState, context: &Context);
 }
