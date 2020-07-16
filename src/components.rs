@@ -1,10 +1,12 @@
+use ggez::graphics::Mesh;
 use ggez::nalgebra::{Point2, Vector2};
 use std::any::Any;
 use std::collections::HashMap;
 use std::fmt::Debug;
 use std::fmt::{self, Display, Formatter};
+use uuid::Uuid;
 
-trait Component: Any + Debug + Display {
+pub trait Component: Any + Debug + Display {
   fn name(&self) -> String;
   fn as_any(&self) -> &dyn Any;
 }
@@ -15,7 +17,7 @@ struct PositionComponent {
 }
 
 impl PositionComponent {
-  fn new(x: f32, y: f32) -> Self {
+  pub fn new(x: f32, y: f32) -> Self {
     PositionComponent {
       position: Point2::new(x, y),
     }
@@ -45,12 +47,12 @@ impl Display for PositionComponent {
 }
 
 #[derive(Debug)]
-struct VelocityComponent {
+pub struct VelocityComponent {
   velocity: Vector2<f32>,
 }
 
 impl VelocityComponent {
-  fn new(x: f32, y: f32) -> Self {
+  pub fn new(x: f32, y: f32) -> Self {
     VelocityComponent {
       velocity: Vector2::new(x, y),
     }
@@ -79,16 +81,42 @@ impl Display for VelocityComponent {
   }
 }
 
-struct Entity {
+#[derive(Debug)]
+pub struct DrawableComponent {
+  mesh: Mesh,
+}
+
+impl Component for DrawableComponent {
+  fn name(&self) -> String {
+    "DrawableComponent".to_string()
+  }
+
+  fn as_any(&self) -> &dyn Any {
+    self
+  }
+}
+
+impl Display for DrawableComponent {
+  fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+    write!(f, "{}", self.name(),)
+  }
+}
+
+pub type EntityId = Uuid;
+
+pub struct Entity {
+  id: EntityId,
   components: HashMap<String, Box<dyn Component>>,
 }
 
 impl Entity {
   fn new() -> Self {
     Entity {
+      id: Uuid::new_v4(),
       components: HashMap::new(),
     }
   }
+
   fn register_component<T: Component>(&mut self, component: T) {
     self
       .components
@@ -129,6 +157,11 @@ mod tests {
     match entity.get_component::<VelocityComponent>("VelocityComponent") {
       Some(v) => assert_eq!(v.velocity, Vector2::new(0., 0.)),
       None => assert!(false, "VelocityComponent was not found"),
+    }
+
+    match entity.get_component::<DrawableComponent>("DrawableComponent") {
+      Some(_) => assert!(false, "Unregistered DrawableComponent found"),
+      None => assert!(true),
     }
   }
 }
