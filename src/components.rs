@@ -12,21 +12,21 @@ pub trait Component: Any + Debug + Display {
 }
 
 #[derive(Debug)]
-struct PositionComponent {
+struct Positionable {
   position: Point2<f32>,
 }
 
-impl PositionComponent {
+impl Positionable {
   pub fn new(x: f32, y: f32) -> Self {
-    PositionComponent {
+    Positionable {
       position: Point2::new(x, y),
     }
   }
 }
 
-impl Component for PositionComponent {
+impl Component for Positionable {
   fn name(&self) -> String {
-    "PositionComponent".to_string()
+    "Positionable".to_string()
   }
 
   fn as_any(&self) -> &dyn Any {
@@ -34,7 +34,7 @@ impl Component for PositionComponent {
   }
 }
 
-impl Display for PositionComponent {
+impl Display for Positionable {
   fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
     write!(
       f,
@@ -47,21 +47,21 @@ impl Display for PositionComponent {
 }
 
 #[derive(Debug)]
-pub struct VelocityComponent {
+pub struct Velocity {
   velocity: Vector2<f32>,
 }
 
-impl VelocityComponent {
+impl Velocity {
   pub fn new(x: f32, y: f32) -> Self {
-    VelocityComponent {
+    Velocity {
       velocity: Vector2::new(x, y),
     }
   }
 }
 
-impl Component for VelocityComponent {
+impl Component for Velocity {
   fn name(&self) -> String {
-    "VelocityComponent".to_string()
+    "Velocity".to_string()
   }
 
   fn as_any(&self) -> &dyn Any {
@@ -69,7 +69,7 @@ impl Component for VelocityComponent {
   }
 }
 
-impl Display for VelocityComponent {
+impl Display for Velocity {
   fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
     write!(
       f,
@@ -82,13 +82,13 @@ impl Display for VelocityComponent {
 }
 
 #[derive(Debug)]
-pub struct DrawableComponent {
+pub struct Drawable {
   mesh: Mesh,
 }
 
-impl Component for DrawableComponent {
+impl Component for Drawable {
   fn name(&self) -> String {
-    "DrawableComponent".to_string()
+    "Drawable".to_string()
   }
 
   fn as_any(&self) -> &dyn Any {
@@ -96,7 +96,7 @@ impl Component for DrawableComponent {
   }
 }
 
-impl Display for DrawableComponent {
+impl Display for Drawable {
   fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
     write!(f, "{}", self.name(),)
   }
@@ -142,25 +142,25 @@ mod tests {
 
   #[test]
   fn can_register_and_get_components() {
-    let velocity = VelocityComponent::new(0., 0.);
-    let position = PositionComponent::new(1., 2.);
+    let velocity = Velocity::new(0., 0.);
+    let position = Positionable::new(1., 2.);
     let mut entity = Entity::new();
 
     entity.register_component(velocity);
     entity.register_component(position);
 
-    match entity.get_component::<PositionComponent>("PositionComponent") {
+    match entity.get_component::<Positionable>("Positionable") {
       Some(p) => assert_eq!(p.position, Point2::new(1., 2.)),
-      None => assert!(false, "PositionComponent was not found"),
+      None => assert!(false, "Positionable was not found"),
     }
 
-    match entity.get_component::<VelocityComponent>("VelocityComponent") {
+    match entity.get_component::<Velocity>("Velocity") {
       Some(v) => assert_eq!(v.velocity, Vector2::new(0., 0.)),
-      None => assert!(false, "VelocityComponent was not found"),
+      None => assert!(false, "Velocity was not found"),
     }
 
-    match entity.get_component::<DrawableComponent>("DrawableComponent") {
-      Some(_) => assert!(false, "Unregistered DrawableComponent found"),
+    match entity.get_component::<Drawable>("Drawable") {
+      Some(_) => assert!(false, "Unregistered Drawable found"),
       None => assert!(true),
     }
   }
