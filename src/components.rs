@@ -1,84 +1,25 @@
 use ggez::graphics::Mesh;
-use ggez::nalgebra::{Point2, Vector2};
 use std::any::Any;
 use std::collections::HashMap;
 use std::fmt::Debug;
 use std::fmt::{self, Display, Formatter};
 use uuid::Uuid;
 
+mod drawable;
+mod physicsable;
+mod positionable;
+
 pub trait Component: Any + Debug + Display {
-  fn name(&self) -> String;
+  fn component_name() -> String
+  where
+    Self: Sized;
+  fn name(&self) -> String
+  where
+    Self: std::marker::Sized,
+  {
+    Self::component_name()
+  }
   fn as_any(&self) -> &dyn Any;
-}
-
-#[derive(Debug)]
-struct Positionable {
-  position: Point2<f32>,
-}
-
-impl Positionable {
-  pub fn new(x: f32, y: f32) -> Self {
-    Positionable {
-      position: Point2::new(x, y),
-    }
-  }
-}
-
-impl Component for Positionable {
-  fn name(&self) -> String {
-    "Positionable".to_string()
-  }
-
-  fn as_any(&self) -> &dyn Any {
-    self
-  }
-}
-
-impl Display for Positionable {
-  fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-    write!(
-      f,
-      "{}: (x: {}, y: {})",
-      self.name(),
-      self.position.x,
-      self.position.y
-    )
-  }
-}
-
-#[derive(Debug)]
-pub struct Velocity {
-  velocity: Vector2<f32>,
-}
-
-impl Velocity {
-  pub fn new(x: f32, y: f32) -> Self {
-    Velocity {
-      velocity: Vector2::new(x, y),
-    }
-  }
-}
-
-impl Component for Velocity {
-  fn name(&self) -> String {
-    "Velocity".to_string()
-  }
-
-  fn as_any(&self) -> &dyn Any {
-    self
-  }
-}
-
-impl Display for Velocity {
-  fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-    write!(
-      f,
-      "{}: (x: {}, y: {})",
-      self.name(),
-      self.velocity.x,
-      self.velocity.y
-    )
-  }
 }
 
 #[derive(Debug)]
@@ -87,7 +28,7 @@ pub struct Drawable {
 }
 
 impl Component for Drawable {
-  fn name(&self) -> String {
+  fn component_name() -> String {
     "Drawable".to_string()
   }
 
@@ -138,11 +79,15 @@ trait System {
 
 #[cfg(test)]
 mod tests {
+  use super::drawable::Drawable;
+  use super::physicsable::Physicsable;
+  use super::positionable::Positionable;
   use super::*;
+  use ggez::nalgebra::{Point2, Vector2};
 
   #[test]
   fn can_register_and_get_components() {
-    let velocity = Velocity::new(0., 0.);
+    let velocity = Physicsable::new(0., 0.);
     let position = Positionable::new(1., 2.);
     let mut entity = Entity::new();
 
@@ -154,9 +99,9 @@ mod tests {
       None => assert!(false, "Positionable was not found"),
     }
 
-    match entity.get_component::<Velocity>("Velocity") {
+    match entity.get_component::<Physicsable>("Physicsable") {
       Some(v) => assert_eq!(v.velocity, Vector2::new(0., 0.)),
-      None => assert!(false, "Velocity was not found"),
+      None => assert!(false, "Physicsable was not found"),
     }
 
     match entity.get_component::<Drawable>("Drawable") {
