@@ -4,6 +4,9 @@ use geo::algorithm::intersects::Intersects;
 use geo::{Coordinate, Line};
 use ggez::nalgebra::Point2;
 use ggez::Context;
+use ggez::GameResult;
+
+// TODO rework collisions into ECS
 
 pub trait Collision {
   fn points(&self) -> Vec<Point2<f32>>;
@@ -14,13 +17,8 @@ pub trait Collision {
 pub struct CollisionSystem;
 
 impl System for CollisionSystem {
-  fn update(game: &mut GameState, _context: &Context) {
-    for shape in &mut game.shapes {
-      if overlaps(&game.ship, shape) {
-        game.ship.collision();
-        shape.collision();
-      }
-    }
+  fn update(game: &mut GameState, _context: &mut Context) -> GameResult {
+    Ok(())
   }
 }
 
