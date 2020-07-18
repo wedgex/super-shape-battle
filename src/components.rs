@@ -9,15 +9,6 @@ pub mod positionable;
 pub mod rotatable;
 
 pub trait Component: Any + Debug + Display {
-  fn component_name() -> String
-  where
-    Self: Sized;
-  fn name(&self) -> String
-  where
-    Self: std::marker::Sized,
-  {
-    Self::component_name()
-  }
   fn as_any(&self) -> &dyn Any;
   fn as_any_mut(&mut self) -> &mut dyn Any;
 }

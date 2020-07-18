@@ -24,10 +24,6 @@ impl Drawable {
 }
 
 impl Component for Drawable {
-  fn component_name() -> String {
-    "Drawable".to_string()
-  }
-
   fn as_any(&self) -> &dyn Any {
     self
   }
@@ -39,6 +35,6 @@ impl Component for Drawable {
 
 impl Display for Drawable {
   fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-    write!(f, "{}", self.name(),)
+    write!(f, "Drawable")
   }
 }

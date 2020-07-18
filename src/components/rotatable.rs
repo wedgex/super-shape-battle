@@ -14,10 +14,6 @@ impl Rotatable {
 }
 
 impl Component for Rotatable {
-  fn component_name() -> String {
-    "Rotatable".to_string()
-  }
-
   fn as_any(&self) -> &dyn Any {
     self
   }
@@ -29,6 +25,6 @@ impl Component for Rotatable {
 
 impl Display for Rotatable {
   fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-    write!(f, "{}: {}", self.name(), self.rotation)
+    write!(f, "Rotatable: {}", self.rotation)
   }
 }

@@ -18,10 +18,6 @@ impl Positionable {
 }
 
 impl Component for Positionable {
-  fn component_name() -> String {
-    "Positionable".to_string()
-  }
-
   fn as_any(&self) -> &dyn Any {
     self
   }
@@ -35,10 +31,8 @@ impl Display for Positionable {
   fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
     write!(
       f,
-      "{}: (x: {}, y: {})",
-      self.name(),
-      self.position.x,
-      self.position.y
+      "Positionable: (x: {}, y: {})",
+      self.position.x, self.position.y
     )
   }
 }

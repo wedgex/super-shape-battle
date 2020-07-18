@@ -21,10 +21,6 @@ impl Physicsable {
 }
 
 impl Component for Physicsable {
-  fn component_name() -> String {
-    "Physicsable".to_string()
-  }
-
   fn as_any(&self) -> &dyn Any {
     self
   }
@@ -38,10 +34,8 @@ impl Display for Physicsable {
   fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
     write!(
       f,
-      "{}: (x: {}, y: {})",
-      self.name(),
-      self.velocity.x,
-      self.velocity.y
+      "Physicsable: (x: {}, y: {})",
+      self.velocity.x, self.velocity.y
     )
   }
 }
