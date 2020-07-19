@@ -2,6 +2,7 @@ use ggez::event;
 use ggez::{ContextBuilder, GameResult};
 
 mod components;
+mod entity;
 mod game;
 mod geometry;
 mod shape;

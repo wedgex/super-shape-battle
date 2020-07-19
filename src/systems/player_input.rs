@@ -1,8 +1,8 @@
-use crate::components::Entity;
 use crate::components::Physicsable;
 use crate::components::PlayerControllable;
 use crate::components::Positionable;
 use crate::components::Rotatable;
+use crate::entity::Entity;
 use crate::game::GameState;
 use crate::geometry;
 use crate::ship::build_bullet;

@@ -1,6 +1,6 @@
-use crate::components::Entity;
 use crate::components::Physicsable;
 use crate::components::Positionable;
+use crate::entity::Entity;
 use crate::game::GameState;
 use ggez::graphics;
 use ggez::Context;

@@ -7,7 +7,7 @@ use ggez::graphics;
 use ggez::Context;
 use ggez::GameResult;
 
-use crate::components::Entity;
+use crate::entity::Entity;
 use crate::shape::{hexagon, octagon, square};
 use crate::ship::build_ship;
 use crate::systems::System;

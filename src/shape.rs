@@ -1,7 +1,7 @@
 use crate::components::Drawable;
-use crate::components::Entity;
 use crate::components::Physicsable;
 use crate::components::Positionable;
+use crate::entity::Entity;
 use crate::geometry::rotation_transform;
 use ggez::graphics;
 use ggez::graphics::Color;

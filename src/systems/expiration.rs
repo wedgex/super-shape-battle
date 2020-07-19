@@ -1,6 +1,6 @@
 use super::System;
-use crate::components::Entity;
 use crate::components::Expirable;
+use crate::entity::Entity;
 use crate::game::GameState;
 use ggez::Context;
 use ggez::GameResult;
