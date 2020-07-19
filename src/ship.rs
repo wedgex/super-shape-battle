@@ -1,10 +1,10 @@
-use crate::components::drawable::Drawable;
-use crate::components::expirable::Expirable;
-use crate::components::physicsable::Physicsable;
-use crate::components::player_controllable::PlayerControllable;
-use crate::components::positionable::Positionable;
-use crate::components::rotatable::Rotatable;
+use crate::components::Drawable;
 use crate::components::Entity;
+use crate::components::Expirable;
+use crate::components::Physicsable;
+use crate::components::PlayerControllable;
+use crate::components::Positionable;
+use crate::components::Rotatable;
 use crate::geometry;
 use ggez::graphics::{self};
 use ggez::nalgebra::Point2;

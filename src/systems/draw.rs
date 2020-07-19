@@ -1,7 +1,7 @@
-use crate::components::drawable::Drawable;
-use crate::components::positionable::Positionable;
-use crate::components::rotatable::Rotatable;
+use crate::components::Drawable;
 use crate::components::Entity;
+use crate::components::Positionable;
+use crate::components::Rotatable;
 use crate::game::GameState;
 use crate::geometry::rotation_transform;
 use ggez::graphics;

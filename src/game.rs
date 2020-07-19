@@ -1,7 +1,7 @@
-use crate::systems::draw::DrawSystem;
-use crate::systems::expiration::ExpirationSystem;
-use crate::systems::physics::PhysicsSystem;
-use crate::systems::player_input::PlayerInputSystem;
+use crate::systems::DrawSystem;
+use crate::systems::ExpirationSystem;
+use crate::systems::PhysicsSystem;
+use crate::systems::PlayerInputSystem;
 use ggez::event;
 use ggez::graphics;
 use ggez::Context;
@@ -19,7 +19,7 @@ pub struct GameState {
 }
 
 impl GameState {
-  pub fn new(context: &mut Context) -> GameResult<GameState> {
+  pub fn new(_context: &mut Context) -> GameResult<GameState> {
     let octagon = octagon(100.0, 100.0);
     let hexagon = hexagon(500.0, 500.0);
     let square = square(300.0, 200.0);

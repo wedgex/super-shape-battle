@@ -3,12 +3,19 @@ use std::fmt::Debug;
 use std::fmt::Display;
 use uuid::Uuid;
 
-pub mod drawable;
-pub mod expirable;
-pub mod physicsable;
-pub mod player_controllable;
-pub mod positionable;
-pub mod rotatable;
+mod drawable;
+mod expirable;
+mod physicsable;
+mod player_controllable;
+mod positionable;
+mod rotatable;
+
+pub use drawable::Drawable;
+pub use expirable::Expirable;
+pub use physicsable::Physicsable;
+pub use player_controllable::PlayerControllable;
+pub use positionable::Positionable;
+pub use rotatable::Rotatable;
 
 pub trait Component: Any + Debug + Display {
   fn as_any(&self) -> &dyn Any;
