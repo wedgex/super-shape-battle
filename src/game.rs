@@ -19,7 +19,7 @@ pub struct GameState {
 }
 
 impl GameState {
-  pub fn new(_context: &mut Context) -> GameResult<GameState> {
+  pub fn new() -> GameResult<GameState> {
     let octagon = octagon(100.0, 100.0);
     let hexagon = hexagon(500.0, 500.0);
     let square = square(300.0, 200.0);
