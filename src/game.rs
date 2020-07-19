@@ -1,4 +1,5 @@
 use crate::systems::draw::DrawSystem;
+use crate::systems::expiration::ExpirationSystem;
 use crate::systems::physics::PhysicsSystem;
 use crate::systems::player_input::PlayerInputSystem;
 use ggez::event;
@@ -13,7 +14,6 @@ use crate::systems::System;
 use std::time::Instant;
 
 pub struct GameState {
-  pub ship: Entity,
   pub entities: Vec<Entity>,
   pub last_fired: Instant,
 }
@@ -24,9 +24,10 @@ impl GameState {
     let hexagon = hexagon(500.0, 500.0);
     let square = square(300.0, 200.0);
 
+    let ship = build_ship();
+
     let s = GameState {
-      ship: build_ship(),
-      entities: vec![octagon, hexagon, square],
+      entities: vec![ship, octagon, hexagon, square],
       last_fired: Instant::now(),
     };
 
@@ -38,6 +39,7 @@ impl event::EventHandler for GameState {
   fn update(&mut self, ctx: &mut Context) -> GameResult {
     PlayerInputSystem::update(self, ctx)?;
     PhysicsSystem::update(self, ctx)?;
+    ExpirationSystem::update(self, ctx)?;
 
     Ok(())
   }

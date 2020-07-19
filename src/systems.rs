@@ -4,6 +4,7 @@ use ggez::GameResult;
 
 pub mod collision;
 pub mod draw;
+pub mod expiration;
 pub mod physics;
 pub mod player_input;
 

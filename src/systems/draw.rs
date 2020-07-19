@@ -16,10 +16,6 @@ pub struct DrawSystem;
 
 impl System for DrawSystem {
   fn update(game: &mut GameState, context: &mut Context) -> GameResult {
-    let ship = &mut game.ship;
-
-    draw(ship, context)?;
-
     for entity in &mut game.entities {
       draw(entity, context)?
     }

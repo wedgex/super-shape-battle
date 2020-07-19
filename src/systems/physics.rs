@@ -14,8 +14,6 @@ pub struct PhysicsSystem;
 
 impl System for PhysicsSystem {
   fn update(game: &mut GameState, context: &mut Context) -> GameResult {
-    act_on(&mut game.ship, context);
-
     for entity in &mut game.entities {
       act_on(entity, context);
     }

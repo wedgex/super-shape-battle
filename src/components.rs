@@ -4,7 +4,9 @@ use std::fmt::Display;
 use uuid::Uuid;
 
 pub mod drawable;
+pub mod expirable;
 pub mod physicsable;
+pub mod player_controllable;
 pub mod positionable;
 pub mod rotatable;
 
