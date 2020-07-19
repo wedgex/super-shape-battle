@@ -1,7 +1,6 @@
 use std::any::Any;
 use std::fmt::Debug;
 use std::fmt::Display;
-use uuid::Uuid;
 
 mod drawable;
 mod expirable;
