@@ -5,30 +5,62 @@ use crate::entity::Entity;
 use crate::geometry::rotation_transform;
 use ggez::graphics;
 use ggez::graphics::Color;
+use ggez::graphics::Mesh;
 use ggez::nalgebra::{Point2, Vector2};
+use ggez::Context;
+use ggez::GameResult;
 use std::f32::consts::PI;
 
 const RED: graphics::Color = graphics::Color::new(255.0, 0.0, 0.0, 1.0);
 const YELLOW: graphics::Color = graphics::Color::new(255.0, 255.0, 0.0, 1.0);
 const GREEN: graphics::Color = graphics::Color::new(0.0, 255.0, 0.0, 1.0);
 
-pub fn octagon(x: f32, y: f32) -> Entity {
-  build_shape(x, y, octagon_points(), RED)
+pub fn octagon(context: &mut Context, x: f32, y: f32) -> GameResult<Entity> {
+  build_shape(
+    context,
+    x,
+    y,
+    octagon_points(),
+    RED,
+    Point2::new(30.18, 30.18), // https://www.omnicalculator.com/math/octagon
+  )
 }
 
-pub fn hexagon(x: f32, y: f32) -> Entity {
-  build_shape(x, y, hexagon_points(), YELLOW)
+pub fn hexagon(context: &mut Context, x: f32, y: f32) -> GameResult<Entity> {
+  build_shape(
+    context,
+    x,
+    y,
+    hexagon_points(),
+    YELLOW,
+    Point2::new(17.32, 17.32), // https://www.omnicalculator.com/math/hexagon
+  )
 }
 
-pub fn square(x: f32, y: f32) -> Entity {
-  build_shape(x, y, square_points(), GREEN)
+pub fn square(context: &mut Context, x: f32, y: f32) -> GameResult<Entity> {
+  build_shape(
+    context,
+    x,
+    y,
+    square_points(),
+    GREEN,
+    Point2::new(15.0 / 2., 15.0 / 2.0),
+  )
 }
 
-pub fn build_shape(x: f32, y: f32, points: Vec<Point2<f32>>, color: Color) -> Entity {
+pub fn build_shape(
+  context: &mut Context,
+  x: f32,
+  y: f32,
+  points: Vec<Point2<f32>>,
+  color: Color,
+  offset: Point2<f32>,
+) -> GameResult<Entity> {
   let mut entity = Entity::new();
 
   let position = Positionable::new(x, y);
-  let drawable = Drawable::new(points, color, graphics::DrawMode::stroke(2.0));
+  let mesh = Mesh::new_polygon(context, graphics::DrawMode::stroke(2.0), &points, color)?;
+  let drawable = Drawable::new(mesh, offset);
   let mut physics = Physicsable::new(0., 0.);
   physics.velocity = Vector2::new(1., 1.);
 
@@ -36,7 +68,7 @@ pub fn build_shape(x: f32, y: f32, points: Vec<Point2<f32>>, color: Color) -> En
   entity.register_component::<Drawable>(drawable);
   entity.register_component(physics);
 
-  entity
+  Ok(entity)
 }
 
 fn polygon_points(sides: i32, length: f32, rotation: f32) -> Vec<Point2<f32>> {

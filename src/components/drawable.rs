@@ -1,4 +1,4 @@
-use ggez::graphics::{Color, DrawMode};
+use ggez::graphics::Mesh;
 use ggez::nalgebra::Point2;
 use std::any::Any;
 use std::fmt::Debug;
@@ -8,18 +8,13 @@ use super::Component;
 
 #[derive(Debug)]
 pub struct Drawable {
-  pub vertices: Vec<Point2<f32>>,
-  pub color: Color,
-  pub draw_mode: DrawMode,
+  pub mesh: Mesh,
+  pub offset: Point2<f32>,
 }
 
 impl Drawable {
-  pub fn new(vertices: Vec<Point2<f32>>, color: Color, draw_mode: DrawMode) -> Self {
-    Drawable {
-      vertices,
-      color,
-      draw_mode,
-    }
+  pub fn new(mesh: Mesh, offset: Point2<f32>) -> Self {
+    Drawable { mesh, offset }
   }
 }
 

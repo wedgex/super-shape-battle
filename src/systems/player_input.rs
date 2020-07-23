@@ -70,7 +70,9 @@ fn handle_fire(entity: &mut Entity, context: &mut Context) -> Option<Entity> {
     if keyboard::is_key_pressed(context, KeyCode::Space) {
       if controllable.last_fired.elapsed().as_secs() > 1 {
         controllable.last_fired = Instant::now();
-        return Some(build_bullet(position.x, position.y, rotation));
+        if let Ok(bullet) = build_bullet(context, position.x, position.y, rotation) {
+          return Some(bullet);
+        }
       }
     }
   }
@@ -86,8 +88,10 @@ pub fn decelerate(physics: &mut Physicsable) {
   physics.acceleration *= 0.0;
 }
 
+const ROTATION_SPEED: f32 = 3.0;
+
 pub fn turn_left(rotatable: &mut Rotatable) {
-  let mut rotation = rotatable.rotation - 1.0;
+  let mut rotation = rotatable.rotation - ROTATION_SPEED;
   if rotation < 0.0 {
     rotation += 360.0;
   }
@@ -95,5 +99,5 @@ pub fn turn_left(rotatable: &mut Rotatable) {
 }
 
 pub fn turn_right(rotatable: &mut Rotatable) {
-  rotatable.rotation = (rotatable.rotation + 1.0) % 360.0;
+  rotatable.rotation = (rotatable.rotation + ROTATION_SPEED) % 360.0;
 }

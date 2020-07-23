@@ -3,9 +3,7 @@ use crate::components::Positionable;
 use crate::components::Rotatable;
 use crate::entity::Entity;
 use crate::game::GameState;
-use crate::geometry::rotation_transform;
 use ggez::graphics;
-use ggez::graphics::Mesh;
 use ggez::nalgebra::Point2;
 use ggez::Context;
 use ggez::GameResult;
@@ -28,18 +26,13 @@ fn draw(entity: &mut Entity, context: &mut Context) -> GameResult {
   if let (Some(drawable), Some(pos)) = (get_drawable(entity), get_position(entity)) {
     let rotation = get_rotation(entity);
 
-    let vertices: Vec<Point2<f32>> = drawable
-      .vertices
-      .iter()
-      .map(|v| rotation_transform(v, rotation))
-      .collect();
-
-    let mesh = Mesh::new_polygon(context, drawable.draw_mode, &vertices, drawable.color)?;
-
     graphics::draw(
       context,
-      &mesh,
-      graphics::DrawParam::default().dest(pos.clone()),
+      &drawable.mesh,
+      graphics::DrawParam::default()
+        .dest(pos.clone())
+        .rotation(rotation.to_radians())
+        .offset(drawable.offset),
     )?;
   }
 

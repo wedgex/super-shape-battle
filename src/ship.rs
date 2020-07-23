@@ -8,17 +8,23 @@ use crate::entity::Entity;
 use crate::geometry;
 use ggez::graphics::{self};
 use ggez::nalgebra::Point2;
+use ggez::Context;
+use ggez::GameResult;
+use graphics::Mesh;
 use std::time::Duration;
 
-pub fn build_ship() -> Entity {
+pub fn build_ship(context: &mut Context) -> GameResult<Entity> {
   let mut entity = Entity::new();
 
   let position = Positionable::new(200., 200.);
-  let drawable = Drawable::new(
-    ship_points(),
-    graphics::WHITE,
+  let mesh = Mesh::new_polygon(
+    context,
     graphics::DrawMode::stroke(2.0),
-  );
+    &ship_points(),
+    graphics::WHITE,
+  )?;
+
+  let drawable = Drawable::new(mesh, Point2::new(25. / 2., 30. / 2.));
   let physics = Physicsable::new(0., 0.);
   let rotation = Rotatable::new(0.);
 
@@ -28,22 +34,24 @@ pub fn build_ship() -> Entity {
   entity.register_component(rotation);
   entity.register_component(PlayerControllable::new());
 
-  entity
+  Ok(entity)
 }
 
-pub fn build_bullet(x: f32, y: f32, angle: f32) -> Entity {
+pub fn build_bullet(context: &mut Context, x: f32, y: f32, angle: f32) -> GameResult<Entity> {
   let mut entity = Entity::new();
   let position = Positionable::new(x, y);
-  let drawable = Drawable::new(
-    vec![
+  let mesh = Mesh::new_polygon(
+    context,
+    graphics::DrawMode::stroke(2.0),
+    &vec![
       Point2::new(0.0, 0.0),
       Point2::new(2.0, 0.0),
       Point2::new(2.0, 2.0),
       Point2::new(0.0, 2.0),
     ],
     graphics::WHITE,
-    graphics::DrawMode::stroke(2.0),
-  );
+  )?;
+  let drawable = Drawable::new(mesh, Point2::new(1., 1.));
 
   let velocity = 4. * geometry::angle_to_vec(angle);
   let physics = Physicsable::new(velocity.x, velocity.y);
@@ -54,7 +62,7 @@ pub fn build_bullet(x: f32, y: f32, angle: f32) -> Entity {
   entity.register_component(physics);
   entity.register_component(expiration);
 
-  entity
+  Ok(entity)
 }
 
 fn ship_points() -> Vec<Point2<f32>> {
