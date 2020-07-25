@@ -4,7 +4,7 @@ use std::any::Any;
 use std::fmt::Debug;
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Positionable {
   pub position: Point2<f32>,
 }

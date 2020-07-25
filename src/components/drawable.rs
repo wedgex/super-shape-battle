@@ -6,7 +6,7 @@ use std::fmt::{self, Display, Formatter};
 
 use super::Component;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Drawable {
   pub mesh: Mesh,
   pub offset: Point2<f32>,

@@ -2,7 +2,7 @@ use super::Component;
 use std::any::Any;
 use std::fmt::{self, Debug, Display, Formatter};
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Rotatable {
   pub rotation: f32,
 }

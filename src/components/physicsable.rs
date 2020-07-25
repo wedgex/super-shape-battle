@@ -5,7 +5,7 @@ use std::fmt::{self, Display, Formatter};
 
 use super::Component;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Physicsable {
   pub velocity: Vector2<f32>,
   pub acceleration: Vector2<f32>,

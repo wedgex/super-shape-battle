@@ -4,7 +4,7 @@ use std::fmt::Debug;
 use std::fmt::{self, Display, Formatter};
 use std::time::{Duration, Instant};
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct PlayerControllable {
   pub last_fired: Instant,
 }

@@ -39,6 +39,14 @@ impl Entity {
 
     None
   }
+
+  pub fn has_component<T: Component>(&self) -> bool {
+    if let Some(_) = self.get_component::<T>() {
+      return true;
+    }
+
+    false
+  }
 }
 
 #[cfg(test)]

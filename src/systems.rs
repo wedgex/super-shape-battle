@@ -8,6 +8,7 @@ mod expiration;
 mod physics;
 mod player_input;
 
+pub use collision::CollisionSystem;
 pub use draw::DrawSystem;
 pub use expiration::ExpirationSystem;
 pub use physics::PhysicsSystem;

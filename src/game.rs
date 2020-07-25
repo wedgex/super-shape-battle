@@ -1,3 +1,4 @@
+use crate::systems::CollisionSystem;
 use crate::systems::DrawSystem;
 use crate::systems::ExpirationSystem;
 use crate::systems::PhysicsSystem;
@@ -40,6 +41,7 @@ impl event::EventHandler for GameState {
     PlayerInputSystem::update(self, ctx)?;
     PhysicsSystem::update(self, ctx)?;
     ExpirationSystem::update(self, ctx)?;
+    CollisionSystem::update(self, ctx)?;
 
     Ok(())
   }

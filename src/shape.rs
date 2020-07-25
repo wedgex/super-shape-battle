@@ -1,3 +1,4 @@
+use crate::components::Collidable;
 use crate::components::Drawable;
 use crate::components::Physicsable;
 use crate::components::Positionable;
@@ -67,6 +68,7 @@ pub fn build_shape(
   entity.register_component::<Positionable>(position);
   entity.register_component::<Drawable>(drawable);
   entity.register_component(physics);
+  entity.register_component(Collidable::new(points.clone()));
 
   Ok(entity)
 }

@@ -2,6 +2,7 @@ use std::any::Any;
 use std::fmt::Debug;
 use std::fmt::Display;
 
+mod collidable;
 mod drawable;
 mod expirable;
 mod physicsable;
@@ -9,6 +10,7 @@ mod player_controllable;
 mod positionable;
 mod rotatable;
 
+pub use collidable::{Collidable, CollisionBounds};
 pub use drawable::Drawable;
 pub use expirable::Expirable;
 pub use physicsable::Physicsable;
