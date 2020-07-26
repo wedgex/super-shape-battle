@@ -1,3 +1,4 @@
+use crate::components::Bullet;
 use crate::components::Collidable;
 use crate::components::Drawable;
 use crate::components::Expirable;
@@ -5,6 +6,7 @@ use crate::components::Physicsable;
 use crate::components::PlayerControllable;
 use crate::components::Positionable;
 use crate::components::Rotatable;
+use crate::components::Ship;
 use crate::entity::Entity;
 use crate::geometry;
 use ggez::graphics::{self};
@@ -37,6 +39,7 @@ pub fn build_ship(context: &mut Context) -> GameResult<Entity> {
   entity.register_component(rotation);
   entity.register_component(Collidable::new(points.clone()));
   entity.register_component(PlayerControllable::new());
+  entity.register_component(Ship::new());
 
   Ok(entity)
 }
@@ -67,6 +70,7 @@ pub fn build_bullet(context: &mut Context, x: f32, y: f32, angle: f32) -> GameRe
   entity.register_component(physics);
   entity.register_component(expiration);
   entity.register_component(Collidable::new(points.clone()));
+  entity.register_component(Bullet::new());
 
   Ok(entity)
 }

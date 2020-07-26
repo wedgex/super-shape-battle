@@ -2,6 +2,7 @@ use crate::components::Collidable;
 use crate::components::Drawable;
 use crate::components::Physicsable;
 use crate::components::Positionable;
+use crate::components::{Shape, ShapeType};
 use crate::entity::Entity;
 use crate::geometry::rotation_transform;
 use ggez::graphics;
@@ -23,6 +24,7 @@ pub fn octagon(context: &mut Context, x: f32, y: f32) -> GameResult<Entity> {
     y,
     octagon_points(),
     RED,
+    ShapeType::Octagon,
     Point2::new(30.18, 30.18), // https://www.omnicalculator.com/math/octagon
   )
 }
@@ -34,6 +36,7 @@ pub fn hexagon(context: &mut Context, x: f32, y: f32) -> GameResult<Entity> {
     y,
     hexagon_points(),
     YELLOW,
+    ShapeType::Hexagon,
     Point2::new(17.32, 17.32), // https://www.omnicalculator.com/math/hexagon
   )
 }
@@ -45,6 +48,7 @@ pub fn square(context: &mut Context, x: f32, y: f32) -> GameResult<Entity> {
     y,
     square_points(),
     GREEN,
+    ShapeType::Square,
     Point2::new(15.0 / 2., 15.0 / 2.0),
   )
 }
@@ -55,6 +59,7 @@ pub fn build_shape(
   y: f32,
   points: Vec<Point2<f32>>,
   color: Color,
+  shape_type: ShapeType,
   offset: Point2<f32>,
 ) -> GameResult<Entity> {
   let mut entity = Entity::new();
@@ -69,6 +74,7 @@ pub fn build_shape(
   entity.register_component::<Drawable>(drawable);
   entity.register_component(physics);
   entity.register_component(Collidable::new(points.clone()));
+  entity.register_component(Shape::new(shape_type));
 
   Ok(entity)
 }

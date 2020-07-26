@@ -20,6 +20,17 @@ impl Entity {
     self.components.push(Box::new(component));
   }
 
+  pub fn remove_component<T: Component>(&mut self) {
+    if let Some((index, _)) = self.components.iter().enumerate().find(|(_, c)| {
+      if let Some(_) = c.as_any().downcast_ref::<T>() {
+        return true;
+      }
+      false
+    }) {
+      self.components.remove(index);
+    }
+  }
+
   pub fn get_component<T: Component>(&self) -> Option<&T> {
     for component in self.components.iter() {
       if let Some(result) = component.as_any().downcast_ref::<T>() {

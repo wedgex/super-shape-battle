@@ -1,4 +1,3 @@
-use crate::entity::EntityId;
 use geo::{LineString, Polygon};
 use ggez::nalgebra::Point2;
 use std::any::Any;
@@ -12,7 +11,6 @@ pub type CollisionBounds = Polygon<f32>;
 #[derive(Clone, Debug)]
 pub struct Collidable {
   pub bounds: CollisionBounds,
-  pub colliding: Vec<EntityId>,
 }
 
 impl Collidable {
@@ -20,7 +18,6 @@ impl Collidable {
     let line_points: Vec<(f32, f32)> = bounds.iter().map(|p| (p.x, p.y)).collect();
     Collidable {
       bounds: Polygon::new(LineString::from(line_points), vec![]),
-      colliding: vec![],
     }
   }
 }
