@@ -65,19 +65,19 @@ mod tests {
   use super::*;
   use crate::components::Drawable;
   use crate::components::Physicsable;
-  use crate::components::Positionable;
+  use crate::components::Transform;
   use ggez::nalgebra::{Point2, Vector2};
 
   #[test]
   fn can_register_and_get_components() {
     let velocity = Physicsable::new(0., 0.);
-    let position = Positionable::new(1., 2.);
+    let position = Transform::new(1., 2.);
     let mut entity = Entity::new();
 
     entity.register_component(velocity);
     entity.register_component(position);
 
-    match entity.get_component::<Positionable>() {
+    match entity.get_component::<Transform>() {
       Some(p) => assert_eq!(p.position, Point2::new(1., 2.)),
       None => assert!(false, "Positionable was not found"),
     }
@@ -96,13 +96,13 @@ mod tests {
   #[test]
   fn can_register_and_get_mut_components() {
     let velocity = Physicsable::new(0., 0.);
-    let position = Positionable::new(1., 2.);
+    let position = Transform::new(1., 2.);
     let mut entity = Entity::new();
 
     entity.register_component(velocity);
     entity.register_component(position);
 
-    match entity.get_component_mut::<Positionable>() {
+    match entity.get_component_mut::<Transform>() {
       Some(p) => assert_eq!(p.position, Point2::new(1., 2.)),
       None => assert!(false, "Positionable was not found"),
     }

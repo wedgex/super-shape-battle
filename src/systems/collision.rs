@@ -3,16 +3,15 @@ use crate::components::Bullet;
 use crate::components::Expirable;
 use crate::components::Physicsable;
 use crate::components::PlayerControllable;
-use crate::components::Positionable;
 use crate::components::Shape;
 use crate::components::Ship;
+use crate::components::Transform;
 use crate::components::{Collidable, CollisionBounds};
 use crate::entity::Entity;
 use crate::GameState;
 use geo::algorithm::intersects::Intersects;
 use geo::algorithm::rotate::Rotate;
 use geo::algorithm::translate::Translate;
-use ggez::nalgebra::Point2;
 use ggez::Context;
 use ggez::GameResult;
 use std::time::Duration;
@@ -26,7 +25,7 @@ impl System for CollisionSystem {
     let collidable_entities: Vec<usize> = entities
       .iter()
       .enumerate()
-      .filter(|(_, e)| e.has_component::<Collidable>() && e.has_component::<Positionable>())
+      .filter(|(_, e)| e.has_component::<Collidable>() && e.has_component::<Transform>())
       .map(|(i, _)| i)
       .collect();
 
@@ -52,27 +51,16 @@ fn overlaps(entity1: &CollisionBounds, entity2: &CollisionBounds) -> bool {
 }
 
 fn get_translated_bounds(entity: &Entity) -> CollisionBounds {
-  let position = get_position(entity);
-  let rotation = get_rotation(entity);
+  let transform = get_transform(entity).unwrap();
   let bounds = get_bounds(entity);
 
-  bounds.translate(position.x, position.y).rotate(rotation)
+  bounds
+    .translate(transform.position.x, transform.position.y)
+    .rotate(transform.rotation)
 }
 
-fn get_position(entity: &Entity) -> Point2<f32> {
-  if let Some(p) = entity.get_component::<Positionable>() {
-    p.position
-  } else {
-    Point2::new(0.0f32, 0.0f32)
-  }
-}
-
-fn get_rotation(entity: &Entity) -> f32 {
-  if let Some(r) = entity.get_component::<Positionable>() {
-    r.rotation
-  } else {
-    0.
-  }
+fn get_transform(entity: &Entity) -> Option<&Transform> {
+  entity.get_component::<Transform>()
 }
 
 fn get_bounds(entity: &Entity) -> CollisionBounds {

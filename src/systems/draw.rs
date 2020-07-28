@@ -1,9 +1,8 @@
 use crate::components::Drawable;
-use crate::components::Positionable;
+use crate::components::Transform;
 use crate::entity::Entity;
 use crate::game::GameState;
 use ggez::graphics;
-use ggez::nalgebra::Point2;
 use ggez::Context;
 use ggez::GameResult;
 
@@ -22,15 +21,13 @@ impl System for DrawSystem {
 }
 
 fn draw(entity: &mut Entity, context: &mut Context) -> GameResult {
-  if let (Some(drawable), Some(pos)) = (get_drawable(entity), get_position(entity)) {
-    let rotation = get_rotation(entity);
-
+  if let (Some(drawable), Some(transform)) = (get_drawable(entity), get_transform(entity)) {
     graphics::draw(
       context,
       &drawable.mesh,
       graphics::DrawParam::default()
-        .dest(pos.clone())
-        .rotation(rotation.to_radians())
+        .dest(transform.position.clone())
+        .rotation(transform.rotation.to_radians())
         .offset(drawable.offset),
     )?;
   }
@@ -45,17 +42,9 @@ fn get_drawable(entity: &Entity) -> Option<&Drawable> {
   None
 }
 
-fn get_position(entity: &Entity) -> Option<&Point2<f32>> {
-  if let Some(psoitionable) = entity.get_component::<Positionable>() {
-    return Some(&psoitionable.position);
+fn get_transform(entity: &Entity) -> Option<&Transform> {
+  if let Some(transform) = entity.get_component::<Transform>() {
+    return Some(transform);
   }
   None
-}
-
-fn get_rotation(entity: &Entity) -> f32 {
-  if let Some(rotatable) = entity.get_component::<Positionable>() {
-    rotatable.rotation
-  } else {
-    0.
-  }
 }

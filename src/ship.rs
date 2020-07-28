@@ -4,8 +4,8 @@ use crate::components::Drawable;
 use crate::components::Expirable;
 use crate::components::Physicsable;
 use crate::components::PlayerControllable;
-use crate::components::Positionable;
 use crate::components::Ship;
+use crate::components::Transform;
 use crate::entity::Entity;
 use crate::geometry;
 use ggez::graphics::{self};
@@ -20,7 +20,7 @@ pub fn build_ship(context: &mut Context) -> GameResult<Entity> {
 
   let points = ship_points();
 
-  let position = Positionable::new(200., 200.);
+  let transform = Transform::new(200., 200.);
   let mesh = Mesh::new_polygon(
     context,
     graphics::DrawMode::stroke(2.0),
@@ -31,7 +31,7 @@ pub fn build_ship(context: &mut Context) -> GameResult<Entity> {
   let drawable = Drawable::new(mesh, Point2::new(25. / 2., 30. / 2.));
   let physics = Physicsable::new(0., 0.);
 
-  entity.register_component(position);
+  entity.register_component(transform);
   entity.register_component(drawable);
   entity.register_component(physics);
   entity.register_component(Collidable::new(points.clone()));
@@ -43,7 +43,7 @@ pub fn build_ship(context: &mut Context) -> GameResult<Entity> {
 
 pub fn build_bullet(context: &mut Context, x: f32, y: f32, angle: f32) -> GameResult<Entity> {
   let mut entity = Entity::new();
-  let position = Positionable::new(x, y);
+  let transform = Transform::new(x, y);
   let points = vec![
     Point2::new(0.0, 0.0),
     Point2::new(2.0, 0.0),
@@ -62,7 +62,7 @@ pub fn build_bullet(context: &mut Context, x: f32, y: f32, angle: f32) -> GameRe
   let physics = Physicsable::new(velocity.x, velocity.y);
   let expiration = Expirable::new(Duration::from_secs(3));
 
-  entity.register_component(position);
+  entity.register_component(transform);
   entity.register_component(drawable);
   entity.register_component(physics);
   entity.register_component(expiration);

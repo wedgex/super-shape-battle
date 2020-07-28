@@ -1,6 +1,6 @@
 use crate::components::Physicsable;
 use crate::components::PlayerControllable;
-use crate::components::Positionable;
+use crate::components::Transform;
 use crate::entity::Entity;
 use crate::game::GameState;
 use crate::geometry;
@@ -35,15 +35,15 @@ impl System for PlayerInputSystem {
 }
 
 fn apply_inputs_to(entity: &mut Entity, context: &mut Context) {
-  let rotation = if let Some(rotatatable) = entity.get_component_mut::<Positionable>() {
+  let rotation = if let Some(transform) = entity.get_component_mut::<Transform>() {
     if keyboard::is_key_pressed(context, KeyCode::A) {
-      turn_left(rotatatable);
+      turn_left(transform);
     }
     if keyboard::is_key_pressed(context, KeyCode::D) {
-      turn_right(rotatatable);
+      turn_right(transform);
     }
 
-    rotatatable.rotation.clone()
+    transform.rotation.clone()
   } else {
     0.
   };
@@ -57,13 +57,9 @@ fn apply_inputs_to(entity: &mut Entity, context: &mut Context) {
 }
 
 fn handle_fire(entity: &mut Entity, context: &mut Context) -> Option<Entity> {
-  let position = entity.get_component::<Positionable>()?.position;
-
-  let rotation = if let Some(rotatable) = entity.get_component::<Positionable>() {
-    rotatable.rotation
-  } else {
-    0.
-  };
+  let transform = entity.get_component::<Transform>()?;
+  let position = transform.position;
+  let rotation = transform.rotation;
 
   if let Some(controllable) = entity.get_component_mut::<PlayerControllable>() {
     if keyboard::is_key_pressed(context, KeyCode::Space) {
@@ -89,14 +85,14 @@ pub fn decelerate(physics: &mut Physicsable) {
 
 const ROTATION_SPEED: f32 = 3.0;
 
-pub fn turn_left(rotatable: &mut Positionable) {
-  let mut rotation = rotatable.rotation - ROTATION_SPEED;
+pub fn turn_left(transform: &mut Transform) {
+  let mut rotation = transform.rotation - ROTATION_SPEED;
   if rotation < 0.0 {
     rotation += 360.0;
   }
-  rotatable.rotation = rotation
+  transform.rotation = rotation
 }
 
-pub fn turn_right(rotatable: &mut Positionable) {
-  rotatable.rotation = (rotatable.rotation + ROTATION_SPEED) % 360.0;
+pub fn turn_right(transform: &mut Transform) {
+  transform.rotation = (transform.rotation + ROTATION_SPEED) % 360.0;
 }

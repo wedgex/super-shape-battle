@@ -2,21 +2,21 @@ use super::Component;
 use ggez::nalgebra::Point2;
 use std::any::Any;
 
-pub struct Positionable {
+pub struct Transform {
   pub position: Point2<f32>,
   pub rotation: f32,
 }
 
-impl Positionable {
+impl Transform {
   pub fn new(x: f32, y: f32) -> Self {
-    Positionable {
+    Transform {
       position: Point2::new(x, y),
       rotation: 0.0,
     }
   }
 }
 
-impl Component for Positionable {
+impl Component for Transform {
   fn as_any(&self) -> &dyn Any {
     self
   }

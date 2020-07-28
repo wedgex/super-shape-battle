@@ -1,7 +1,7 @@
 use crate::components::Collidable;
 use crate::components::Drawable;
 use crate::components::Physicsable;
-use crate::components::Positionable;
+use crate::components::Transform;
 use crate::components::{Shape, ShapeType};
 use crate::entity::Entity;
 use crate::geometry::rotation_transform;
@@ -64,14 +64,14 @@ pub fn build_shape(
 ) -> GameResult<Entity> {
   let mut entity = Entity::new();
 
-  let position = Positionable::new(x, y);
+  let transform = Transform::new(x, y);
   let mesh = Mesh::new_polygon(context, graphics::DrawMode::stroke(2.0), &points, color)?;
   let drawable = Drawable::new(mesh, offset);
   let mut physics = Physicsable::new(0., 0.);
   physics.velocity = Vector2::new(1., 1.);
 
-  entity.register_component::<Positionable>(position);
-  entity.register_component::<Drawable>(drawable);
+  entity.register_component(transform);
+  entity.register_component(drawable);
   entity.register_component(physics);
   entity.register_component(Collidable::new(points.clone()));
   entity.register_component(Shape::new(shape_type));

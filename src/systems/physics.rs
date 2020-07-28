@@ -1,5 +1,5 @@
 use crate::components::Physicsable;
-use crate::components::Positionable;
+use crate::components::Transform;
 use crate::entity::Entity;
 use crate::game::GameState;
 use ggez::graphics;
@@ -40,14 +40,14 @@ fn handle_acceleration(entity: &mut Entity) {
 fn handle_velocity(entity: &mut Entity) {
   if let Some(physics) = entity.get_component::<Physicsable>() {
     let velocity = physics.velocity.clone();
-    if let Some(position) = entity.get_component_mut::<Positionable>() {
+    if let Some(position) = entity.get_component_mut::<Transform>() {
       position.position += velocity;
     }
   }
 }
 
 fn wrap_position(entity: &mut Entity, context: &mut Context) {
-  if let Some(position) = entity.get_component_mut::<Positionable>() {
+  if let Some(position) = entity.get_component_mut::<Transform>() {
     let (screen_width, screen_height) = graphics::drawable_size(context);
 
     if position.position.x < 0.0 {
