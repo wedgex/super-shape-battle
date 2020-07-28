@@ -1,6 +1,4 @@
 use std::any::Any;
-use std::fmt::Debug;
-use std::fmt::Display;
 
 mod bullet;
 mod collidable;
@@ -24,7 +22,7 @@ pub use rotatable::Rotatable;
 pub use shape::{Shape, ShapeType};
 pub use ship::Ship;
 
-pub trait Component: Any + Debug + Display {
+pub trait Component: Any {
   fn as_any(&self) -> &dyn Any;
   fn as_any_mut(&mut self) -> &mut dyn Any;
 }

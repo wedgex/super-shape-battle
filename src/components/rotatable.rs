@@ -1,6 +1,5 @@
 use super::Component;
 use std::any::Any;
-use std::fmt::{self, Debug, Display, Formatter};
 
 #[derive(Clone, Debug)]
 pub struct Rotatable {
@@ -20,11 +19,5 @@ impl Component for Rotatable {
 
   fn as_any_mut(&mut self) -> &mut dyn Any {
     self
-  }
-}
-
-impl Display for Rotatable {
-  fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-    write!(f, "Rotatable: {}", self.rotation)
   }
 }
