@@ -5,7 +5,6 @@ use crate::components::Expirable;
 use crate::components::Physicsable;
 use crate::components::PlayerControllable;
 use crate::components::Positionable;
-use crate::components::Rotatable;
 use crate::components::Ship;
 use crate::entity::Entity;
 use crate::geometry;
@@ -31,12 +30,10 @@ pub fn build_ship(context: &mut Context) -> GameResult<Entity> {
 
   let drawable = Drawable::new(mesh, Point2::new(25. / 2., 30. / 2.));
   let physics = Physicsable::new(0., 0.);
-  let rotation = Rotatable::new(0.);
 
   entity.register_component(position);
   entity.register_component(drawable);
   entity.register_component(physics);
-  entity.register_component(rotation);
   entity.register_component(Collidable::new(points.clone()));
   entity.register_component(PlayerControllable::new());
   entity.register_component(Ship::new());

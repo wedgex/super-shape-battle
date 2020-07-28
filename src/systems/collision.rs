@@ -4,7 +4,6 @@ use crate::components::Expirable;
 use crate::components::Physicsable;
 use crate::components::PlayerControllable;
 use crate::components::Positionable;
-use crate::components::Rotatable;
 use crate::components::Shape;
 use crate::components::Ship;
 use crate::components::{Collidable, CollisionBounds};
@@ -69,7 +68,7 @@ fn get_position(entity: &Entity) -> Point2<f32> {
 }
 
 fn get_rotation(entity: &Entity) -> f32 {
-  if let Some(r) = entity.get_component::<Rotatable>() {
+  if let Some(r) = entity.get_component::<Positionable>() {
     r.rotation
   } else {
     0.

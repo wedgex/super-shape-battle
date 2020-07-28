@@ -4,12 +4,14 @@ use std::any::Any;
 
 pub struct Positionable {
   pub position: Point2<f32>,
+  pub rotation: f32,
 }
 
 impl Positionable {
   pub fn new(x: f32, y: f32) -> Self {
     Positionable {
       position: Point2::new(x, y),
+      rotation: 0.0,
     }
   }
 }

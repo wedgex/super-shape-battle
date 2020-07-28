@@ -7,7 +7,6 @@ mod expirable;
 mod physicsable;
 mod player_controllable;
 mod positionable;
-mod rotatable;
 mod shape;
 mod ship;
 
@@ -18,7 +17,6 @@ pub use expirable::Expirable;
 pub use physicsable::Physicsable;
 pub use player_controllable::PlayerControllable;
 pub use positionable::Positionable;
-pub use rotatable::Rotatable;
 pub use shape::{Shape, ShapeType};
 pub use ship::Ship;
 

@@ -1,7 +1,6 @@
 use crate::components::Physicsable;
 use crate::components::PlayerControllable;
 use crate::components::Positionable;
-use crate::components::Rotatable;
 use crate::entity::Entity;
 use crate::game::GameState;
 use crate::geometry;
@@ -36,7 +35,7 @@ impl System for PlayerInputSystem {
 }
 
 fn apply_inputs_to(entity: &mut Entity, context: &mut Context) {
-  let rotation = if let Some(rotatatable) = entity.get_component_mut::<Rotatable>() {
+  let rotation = if let Some(rotatatable) = entity.get_component_mut::<Positionable>() {
     if keyboard::is_key_pressed(context, KeyCode::A) {
       turn_left(rotatatable);
     }
@@ -60,7 +59,7 @@ fn apply_inputs_to(entity: &mut Entity, context: &mut Context) {
 fn handle_fire(entity: &mut Entity, context: &mut Context) -> Option<Entity> {
   let position = entity.get_component::<Positionable>()?.position;
 
-  let rotation = if let Some(rotatable) = entity.get_component::<Rotatable>() {
+  let rotation = if let Some(rotatable) = entity.get_component::<Positionable>() {
     rotatable.rotation
   } else {
     0.
@@ -90,7 +89,7 @@ pub fn decelerate(physics: &mut Physicsable) {
 
 const ROTATION_SPEED: f32 = 3.0;
 
-pub fn turn_left(rotatable: &mut Rotatable) {
+pub fn turn_left(rotatable: &mut Positionable) {
   let mut rotation = rotatable.rotation - ROTATION_SPEED;
   if rotation < 0.0 {
     rotation += 360.0;
@@ -98,6 +97,6 @@ pub fn turn_left(rotatable: &mut Rotatable) {
   rotatable.rotation = rotation
 }
 
-pub fn turn_right(rotatable: &mut Rotatable) {
+pub fn turn_right(rotatable: &mut Positionable) {
   rotatable.rotation = (rotatable.rotation + ROTATION_SPEED) % 360.0;
 }

@@ -1,6 +1,5 @@
 use crate::components::Drawable;
 use crate::components::Positionable;
-use crate::components::Rotatable;
 use crate::entity::Entity;
 use crate::game::GameState;
 use ggez::graphics;
@@ -54,7 +53,7 @@ fn get_position(entity: &Entity) -> Option<&Point2<f32>> {
 }
 
 fn get_rotation(entity: &Entity) -> f32 {
-  if let Some(rotatable) = entity.get_component::<Rotatable>() {
+  if let Some(rotatable) = entity.get_component::<Positionable>() {
     rotatable.rotation
   } else {
     0.
