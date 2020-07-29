@@ -12,11 +12,9 @@ use crate::entity::Entity;
 use crate::shape::{hexagon, octagon, square};
 use crate::ship::build_ship;
 use crate::systems::System;
-use std::time::Instant;
 
 pub struct GameState {
   pub entities: Vec<Entity>,
-  pub last_fired: Instant,
 }
 
 impl GameState {
@@ -29,7 +27,6 @@ impl GameState {
 
     let s = GameState {
       entities: vec![ship, octagon, hexagon, square],
-      last_fired: Instant::now(),
     };
 
     Ok(s)
