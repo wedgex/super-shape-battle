@@ -1,11 +1,8 @@
 use super::System;
-use crate::components::Bullet;
-use crate::components::Expirable;
+use crate::components::Damage;
 use crate::components::Physicsable;
-use crate::components::PlayerControllable;
-use crate::components::Shape;
-use crate::components::Ship;
 use crate::components::Transform;
+use crate::components::Vulnerable;
 use crate::components::{Collidable, CollisionBounds};
 use crate::entity::Entity;
 use crate::GameState;
@@ -14,7 +11,6 @@ use geo::algorithm::rotate::Rotate;
 use geo::algorithm::translate::Translate;
 use ggez::Context;
 use ggez::GameResult;
-use std::time::Duration;
 
 pub struct CollisionSystem;
 
@@ -68,33 +64,22 @@ fn get_bounds(entity: &Entity) -> CollisionBounds {
 }
 
 fn handle_collision(entity1: &mut Entity, entity2: &mut Entity) {
-  if is_ship(entity1) {
-    if is_shape(entity2) {
-      // destroy the ship
-      entity1.remove_component::<PlayerControllable>();
-      entity1.remove_component::<Physicsable>();
-      // add an explosion at the player position
-    }
+  if is_vulnerable_to(entity1, entity2) {
+    entity1.remove_component::<Physicsable>();
   }
 
-  if is_bullet(entity1) {
-    if is_shape(entity2) {
-      // destroy the shape & bullet
-      entity1.remove_component::<Expirable>();
-      entity1.register_component(Expirable::new(Duration::from_secs(0)));
-      entity2.register_component(Expirable::new(Duration::from_secs(0)));
-    }
+  if is_vulnerable_to(entity2, entity1) {
+    entity2.remove_component::<Physicsable>();
   }
 }
 
-fn is_ship(entity: &Entity) -> bool {
-  entity.has_component::<Ship>()
-}
-
-fn is_shape(entity: &Entity) -> bool {
-  entity.has_component::<Shape>()
-}
-
-fn is_bullet(entity: &Entity) -> bool {
-  entity.has_component::<Bullet>()
+fn is_vulnerable_to(entity1: &Entity, entity2: &Entity) -> bool {
+  if let Some(vulnerability) = entity1.get_component::<Vulnerable>() {
+    if let Some(damage) = entity2.get_component::<Damage>() {
+      if vulnerability.damage_types.contains(&damage.damage_type) {
+        return true;
+      }
+    }
+  }
+  false
 }

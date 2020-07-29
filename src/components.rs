@@ -1,24 +1,22 @@
 use std::any::Any;
 
-mod bullet;
 mod collidable;
+mod damage;
 mod drawable;
 mod expirable;
 mod physicsable;
 mod player_controllable;
-mod shape;
-mod ship;
 mod transform;
+mod vulnerable;
 
-pub use bullet::Bullet;
 pub use collidable::{Collidable, CollisionBounds};
+pub use damage::{Damage, DamageType};
 pub use drawable::Drawable;
 pub use expirable::Expirable;
 pub use physicsable::Physicsable;
 pub use player_controllable::PlayerControllable;
-pub use shape::{Shape, ShapeType};
-pub use ship::Ship;
 pub use transform::Transform;
+pub use vulnerable::Vulnerable;
 
 pub trait Component: Any {
   fn as_any(&self) -> &dyn Any;
