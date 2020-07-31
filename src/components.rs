@@ -1,6 +1,7 @@
 use std::any::Any;
 
 mod collidable;
+mod collision;
 mod damage;
 mod drawable;
 mod expirable;
@@ -10,6 +11,7 @@ mod transform;
 mod vulnerable;
 
 pub use collidable::{Collidable, CollisionBounds};
+pub use collision::Collision;
 pub use damage::{Damage, DamageType};
 pub use drawable::Drawable;
 pub use expirable::Expirable;

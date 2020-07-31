@@ -1,10 +1,9 @@
 use super::System;
-use crate::components::Damage;
-use crate::components::Physicsable;
+use crate::components::Collision;
 use crate::components::Transform;
-use crate::components::Vulnerable;
 use crate::components::{Collidable, CollisionBounds};
 use crate::entity::Entity;
+use crate::entity::EntityId;
 use crate::GameState;
 use geo::algorithm::intersects::Intersects;
 use geo::algorithm::rotate::Rotate;
@@ -16,7 +15,9 @@ pub struct CollisionSystem;
 
 impl System for CollisionSystem {
   fn update(game: &mut GameState, _context: &mut Context) -> GameResult {
-    let entities = game.entities.as_mut_slice();
+    game.entities.retain(|e| !e.has_component::<Collision>());
+
+    let entities = game.entities.as_slice();
 
     let collidable_entities: Vec<usize> = entities
       .iter()
@@ -25,18 +26,22 @@ impl System for CollisionSystem {
       .map(|(i, _)| i)
       .collect();
 
+    let mut collisions: Vec<Entity> = vec![];
+
     for i in collidable_entities {
-      let (head, tail) = entities.split_at_mut(i + 1);
-      let entity1 = &mut head[i];
+      let (head, tail) = entities.split_at(i + 1);
+      let entity1 = head[i].id;
       for entity2 in tail {
-        let c1_bounds = get_translated_bounds(entity1);
-        let c2_bounds = get_translated_bounds(entity2);
+        let entity2 = entity2.id;
+        let c1_bounds = get_translated_bounds(game, entity1);
+        let c2_bounds = get_translated_bounds(game, entity2);
         if overlaps(&c1_bounds, &c2_bounds) {
-          handle_collision(entity1, entity2);
-          handle_collision(entity2, entity1);
+          collisions.push(collision(entity1, entity2));
         }
       }
     }
+
+    game.entities.extend(collisions.into_iter());
 
     Ok(())
   }
@@ -46,40 +51,22 @@ fn overlaps(entity1: &CollisionBounds, entity2: &CollisionBounds) -> bool {
   entity1.intersects(entity2)
 }
 
-fn get_translated_bounds(entity: &Entity) -> CollisionBounds {
-  let transform = get_transform(entity).unwrap();
-  let bounds = get_bounds(entity);
+fn get_translated_bounds(game: &GameState, entity: EntityId) -> CollisionBounds {
+  let transform = game
+    .get_component::<Transform>(entity)
+    .expect("Called get_translated_bounds on entity with no Transform.");
+  let bounds = game
+    .get_component::<Collidable>(entity)
+    .expect("Called get_translated_bounds on entity with no Collidable.");
+  let bounds = bounds.bounds.clone();
 
   bounds
     .translate(transform.position.x, transform.position.y)
     .rotate(transform.rotation)
 }
 
-fn get_transform(entity: &Entity) -> Option<&Transform> {
-  entity.get_component::<Transform>()
-}
-
-fn get_bounds(entity: &Entity) -> CollisionBounds {
-  entity.get_component::<Collidable>().unwrap().bounds.clone()
-}
-
-fn handle_collision(entity1: &mut Entity, entity2: &mut Entity) {
-  if is_vulnerable_to(entity1, entity2) {
-    entity1.remove_component::<Physicsable>();
-  }
-
-  if is_vulnerable_to(entity2, entity1) {
-    entity2.remove_component::<Physicsable>();
-  }
-}
-
-fn is_vulnerable_to(entity1: &Entity, entity2: &Entity) -> bool {
-  if let Some(vulnerability) = entity1.get_component::<Vulnerable>() {
-    if let Some(damage) = entity2.get_component::<Damage>() {
-      if vulnerability.damage_types.contains(&damage.damage_type) {
-        return true;
-      }
-    }
-  }
-  false
+fn collision(entity1: EntityId, entity2: EntityId) -> Entity {
+  let mut collision = Entity::new();
+  collision.register_component(Collision::new(entity1, entity2));
+  collision
 }

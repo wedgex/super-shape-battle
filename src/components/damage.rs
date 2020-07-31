@@ -2,7 +2,7 @@ use std::any::Any;
 
 use super::Component;
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone)]
 pub enum DamageType {
   Projectile,
   Smash,

@@ -1,4 +1,7 @@
+use crate::components::Component;
+use crate::entity::EntityId;
 use crate::systems::CollisionSystem;
+use crate::systems::DamageSystem;
 use crate::systems::DrawSystem;
 use crate::systems::ExpirationSystem;
 use crate::systems::PhysicsSystem;
@@ -31,6 +34,40 @@ impl GameState {
 
     Ok(s)
   }
+
+  pub fn entities_with<T: Component>(&self) -> Vec<&Entity> {
+    self
+      .entities
+      .iter()
+      .filter(|e| e.has_component::<T>())
+      .collect()
+  }
+
+  pub fn entities_with_mut<T: Component>(&mut self) -> Vec<&mut Entity> {
+    self
+      .entities
+      .iter_mut()
+      .filter(|e| e.has_component::<T>())
+      .collect()
+  }
+
+  pub fn get_entity(&self, id: EntityId) -> Option<&Entity> {
+    self.entities.iter().find(|e| e.id == id)
+  }
+
+  pub fn get_entity_mut(&mut self, id: EntityId) -> Option<&mut Entity> {
+    self.entities.iter_mut().find(|e| e.id == id)
+  }
+
+  pub fn get_component<T: Component>(&self, id: EntityId) -> Option<&T> {
+    self.get_entity(id).and_then(|e| e.get_component::<T>())
+  }
+
+  pub fn get_component_mut<T: Component>(&mut self, id: EntityId) -> Option<&mut T> {
+    self
+      .get_entity_mut(id)
+      .and_then(|e| e.get_component_mut::<T>())
+  }
 }
 
 impl event::EventHandler for GameState {
@@ -39,6 +76,7 @@ impl event::EventHandler for GameState {
     PhysicsSystem::update(self, ctx)?;
     ExpirationSystem::update(self, ctx)?;
     CollisionSystem::update(self, ctx)?;
+    DamageSystem::update(self, ctx)?;
 
     Ok(())
   }
