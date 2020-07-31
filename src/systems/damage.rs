@@ -12,16 +12,15 @@ pub struct DamageSystem;
 
 impl System for DamageSystem {
   fn update(game: &mut GameState, _context: &mut Context) -> GameResult {
-    let entities = &game.entities;
-
-    let collisions: Vec<(EntityId, EntityId)> = entities
-      .iter()
+    let collisions: Vec<(EntityId, EntityId)> = game
+      .entities_with::<Collision>()
+      .into_iter()
       .filter_map(|e| e.get_component::<Collision>())
       .map(|c| (c.entity1, c.entity2))
       .collect();
 
     for (e1, e2) in collisions {
-      handle_collision(game, e1, e2)
+      handle_collision(game, e1, e2);
     }
 
     Ok(())
