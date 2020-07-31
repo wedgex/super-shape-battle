@@ -16,10 +16,7 @@ impl System for ExpirationSystem {
 }
 
 fn should_keep(entity: &Entity) -> bool {
-  if let Some(expirable) = entity.get_component::<Expirable>() {
-    if expirable.created.elapsed() > expirable.expiration {
-      return false;
-    }
-  }
-  true
+  entity
+    .get_component::<Expirable>()
+    .map_or(true, |e| !e.is_expired())
 }

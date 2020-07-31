@@ -15,6 +15,10 @@ impl Expirable {
       expiration,
     }
   }
+
+  pub fn is_expired(&self) -> bool {
+    self.created.elapsed() > self.expiration
+  }
 }
 
 impl Component for Expirable {

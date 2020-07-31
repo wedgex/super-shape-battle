@@ -12,7 +12,7 @@ pub struct DrawSystem;
 
 impl System for DrawSystem {
   fn update(game: &mut GameState, context: &mut Context) -> GameResult {
-    for entity in &mut game.entities {
+    for entity in &game.entities {
       draw(entity, context)?
     }
 
@@ -20,8 +20,11 @@ impl System for DrawSystem {
   }
 }
 
-fn draw(entity: &mut Entity, context: &mut Context) -> GameResult {
-  if let (Some(drawable), Some(transform)) = (get_drawable(entity), get_transform(entity)) {
+fn draw(entity: &Entity, context: &mut Context) -> GameResult {
+  let drawable = entity.get_component::<Drawable>();
+  let transform = entity.get_component::<Transform>();
+
+  if let (Some(drawable), Some(transform)) = (drawable, transform) {
     graphics::draw(
       context,
       &drawable.mesh,
@@ -33,18 +36,4 @@ fn draw(entity: &mut Entity, context: &mut Context) -> GameResult {
   }
 
   Ok(())
-}
-
-fn get_drawable(entity: &Entity) -> Option<&Drawable> {
-  if let Some(drawable) = entity.get_component::<Drawable>() {
-    return Some(drawable);
-  }
-  None
-}
-
-fn get_transform(entity: &Entity) -> Option<&Transform> {
-  if let Some(transform) = entity.get_component::<Transform>() {
-    return Some(transform);
-  }
-  None
 }
