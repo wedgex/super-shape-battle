@@ -25,3 +25,9 @@ impl Component for Transform {
     self
   }
 }
+
+impl Default for Transform {
+  fn default() -> Self {
+    Transform::new(0., 0.)
+  }
+}

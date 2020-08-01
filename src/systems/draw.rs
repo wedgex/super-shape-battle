@@ -12,8 +12,10 @@ pub struct DrawSystem;
 
 impl System for DrawSystem {
   fn update(game: &mut GameState, context: &mut Context) -> GameResult {
-    for entity in &game.entities {
-      draw(entity, context)?
+    let drawables: Vec<&Entity> = game.entities_with::<Drawable>().into_iter().collect();
+
+    for drawable in drawables {
+      draw(drawable, context)?
     }
 
     Ok(())

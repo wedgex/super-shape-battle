@@ -68,6 +68,22 @@ impl GameState {
       .get_entity_mut(id)
       .and_then(|e| e.get_component_mut::<T>())
   }
+
+  pub fn get_components<T: Component>(&self) -> Vec<&T> {
+    self
+      .entities
+      .iter()
+      .filter_map(|e| e.get_component::<T>())
+      .collect()
+  }
+
+  pub fn get_components_mut<T: Component>(&mut self) -> Vec<&mut T> {
+    self
+      .entities
+      .iter_mut()
+      .filter_map(|e| e.get_component_mut::<T>())
+      .collect()
+  }
 }
 
 impl event::EventHandler for GameState {

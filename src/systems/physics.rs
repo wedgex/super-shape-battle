@@ -1,6 +1,6 @@
 use crate::components::Physicsable;
 use crate::components::Transform;
-use crate::entity::Entity;
+use crate::entity::EntityId;
 use crate::game::GameState;
 use ggez::graphics;
 use ggez::Context;
@@ -14,22 +14,24 @@ pub struct PhysicsSystem;
 
 impl System for PhysicsSystem {
   fn update(game: &mut GameState, context: &mut Context) -> GameResult {
-    for entity in &mut game.entities {
-      act_on(entity, context);
+    let entities: Vec<EntityId> = game
+      .entities_with::<Physicsable>()
+      .iter()
+      .map(|e| e.id)
+      .collect();
+
+    for entity_id in entities {
+      handle_acceleration(game, entity_id);
+      handle_velocity(game, entity_id);
+      wrap_position(game, context, entity_id);
     }
 
     Ok(())
   }
 }
 
-fn act_on(entity: &mut Entity, context: &mut Context) {
-  handle_acceleration(entity);
-  handle_velocity(entity);
-  wrap_position(entity, context);
-}
-
-fn handle_acceleration(entity: &mut Entity) {
-  if let Some(physics) = entity.get_component_mut::<Physicsable>() {
+fn handle_acceleration(game: &mut GameState, entity_id: EntityId) {
+  if let Some(physics) = game.get_component_mut::<Physicsable>(entity_id) {
     physics.velocity += physics.acceleration;
     if physics.velocity.norm_squared() > MAX_VELOCITY.powi(2) {
       physics.velocity = physics.velocity / physics.velocity.norm_squared().sqrt() * MAX_VELOCITY;
@@ -37,17 +39,17 @@ fn handle_acceleration(entity: &mut Entity) {
   }
 }
 
-fn handle_velocity(entity: &mut Entity) {
-  if let Some(physics) = entity.get_component::<Physicsable>() {
+fn handle_velocity(game: &mut GameState, entity_id: EntityId) {
+  if let Some(physics) = game.get_component::<Physicsable>(entity_id) {
     let velocity = physics.velocity.clone();
-    if let Some(position) = entity.get_component_mut::<Transform>() {
+    if let Some(position) = game.get_component_mut::<Transform>(entity_id) {
       position.position += velocity;
     }
   }
 }
 
-fn wrap_position(entity: &mut Entity, context: &mut Context) {
-  if let Some(position) = entity.get_component_mut::<Transform>() {
+fn wrap_position(game: &mut GameState, context: &mut Context, entity_id: EntityId) {
+  if let Some(position) = game.get_component_mut::<Transform>(entity_id) {
     let (screen_width, screen_height) = graphics::drawable_size(context);
 
     if position.position.x < 0.0 {

@@ -1,12 +1,13 @@
 use crate::components::Physicsable;
 use crate::components::PlayerControllable;
 use crate::components::Transform;
-use crate::entity::Entity;
+use crate::entity::EntityId;
 use crate::game::GameState;
 use crate::geometry;
 use crate::ship::build_bullet;
 use ggez::event::KeyCode;
 use ggez::input::keyboard;
+use ggez::nalgebra::Point2;
 use ggez::Context;
 use ggez::GameResult;
 use std::time::Instant;
@@ -17,25 +18,23 @@ pub struct PlayerInputSystem;
 
 impl System for PlayerInputSystem {
   fn update(game: &mut GameState, context: &mut Context) -> GameResult {
-    let mut bullet: Option<Entity> = None;
+    let entity_ids: Vec<EntityId> = game
+      .entities_with_mut::<PlayerControllable>()
+      .iter_mut()
+      .map(|e| e.id)
+      .collect();
 
-    for entity in game.entities.iter_mut() {
-      if let Some(_) = entity.get_component::<PlayerControllable>() {
-        apply_inputs_to(entity, context);
-        bullet = handle_fire(entity, context);
-      }
-    }
-
-    if let Some(b) = bullet {
-      game.entities.push(b);
+    for entity_id in entity_ids {
+      apply_inputs_to(game, context, entity_id);
+      handle_fire(game, context, entity_id);
     }
 
     Ok(())
   }
 }
 
-fn apply_inputs_to(entity: &mut Entity, context: &mut Context) {
-  let rotation = if let Some(transform) = entity.get_component_mut::<Transform>() {
+fn apply_inputs_to(game: &mut GameState, context: &mut Context, entity_id: EntityId) {
+  let rotation = if let Some(transform) = game.get_component_mut::<Transform>(entity_id) {
     if keyboard::is_key_pressed(context, KeyCode::A) {
       turn_left(transform);
     }
@@ -47,7 +46,8 @@ fn apply_inputs_to(entity: &mut Entity, context: &mut Context) {
   } else {
     0.
   };
-  if let Some(physics) = entity.get_component_mut::<Physicsable>() {
+
+  if let Some(physics) = game.get_component_mut::<Physicsable>(entity_id) {
     if keyboard::is_key_pressed(context, KeyCode::W) {
       accelerate(physics, rotation);
     } else {
@@ -56,23 +56,21 @@ fn apply_inputs_to(entity: &mut Entity, context: &mut Context) {
   }
 }
 
-fn handle_fire(entity: &mut Entity, context: &mut Context) -> Option<Entity> {
-  let transform = entity.get_component::<Transform>()?;
-  let position = transform.position;
-  let rotation = transform.rotation;
+fn handle_fire(game: &mut GameState, context: &mut Context, entity_id: EntityId) {
+  let transform = game.get_component::<Transform>(entity_id);
+  let position = transform.map(|t| t.position).unwrap_or(Point2::new(0., 0.));
+  let rotation = transform.map(|t| t.rotation).unwrap_or(0.0);
 
-  if let Some(controllable) = entity.get_component_mut::<PlayerControllable>() {
+  if let Some(controllable) = game.get_component_mut::<PlayerControllable>(entity_id) {
     if keyboard::is_key_pressed(context, KeyCode::Space) {
       if controllable.last_fired.elapsed().as_secs() > 1 {
         controllable.last_fired = Instant::now();
         if let Ok(bullet) = build_bullet(context, position.x, position.y, rotation) {
-          return Some(bullet);
+          game.entities.push(bullet);
         }
       }
     }
   }
-
-  None
 }
 
 pub fn accelerate(physics: &mut Physicsable, rotation: f32) {
