@@ -8,6 +8,7 @@ mod draw;
 mod expiration;
 mod physics;
 mod player_input;
+mod ship_manager;
 
 pub use collision::CollisionSystem;
 pub use damage::DamageSystem;
@@ -15,6 +16,7 @@ pub use draw::DrawSystem;
 pub use expiration::ExpirationSystem;
 pub use physics::PhysicsSystem;
 pub use player_input::PlayerInputSystem;
+pub use ship_manager::ShipManager;
 
 pub trait System {
   fn update(game: &mut GameState, context: &mut Context) -> GameResult;

@@ -1,5 +1,6 @@
 use super::System;
 use crate::components::Collision;
+use crate::components::Tag;
 use crate::components::Transform;
 use crate::components::{Collidable, CollisionBounds};
 use crate::entity::Entity;
@@ -35,8 +36,10 @@ impl System for CollisionSystem {
         let entity2 = entity2.id;
         let c1_bounds = get_translated_bounds(game, entity1);
         let c2_bounds = get_translated_bounds(game, entity2);
-        if overlaps(&c1_bounds, &c2_bounds) {
-          collisions.push(collision(entity1, entity2));
+        if let (Some(c1_bounds), Some(c2_bounds)) = (c1_bounds, c2_bounds) {
+          if overlaps(&c1_bounds, &c2_bounds) {
+            collisions.push(collision(entity1, entity2));
+          }
         }
       }
     }
@@ -51,18 +54,20 @@ fn overlaps(entity1: &CollisionBounds, entity2: &CollisionBounds) -> bool {
   entity1.intersects(entity2)
 }
 
-fn get_translated_bounds(game: &GameState, entity: EntityId) -> CollisionBounds {
-  let transform = game
-    .get_component::<Transform>(entity)
-    .expect("Called get_translated_bounds on entity with no Transform.");
-  let bounds = game
-    .get_component::<Collidable>(entity)
-    .expect("Called get_translated_bounds on entity with no Collidable.");
-  let bounds = bounds.bounds.clone();
+fn get_translated_bounds(game: &GameState, entity: EntityId) -> Option<CollisionBounds> {
+  let transform = game.get_component::<Transform>(entity);
+  let bounds = game.get_component::<Collidable>(entity);
 
-  bounds
-    .translate(transform.position.x, transform.position.y)
-    .rotate(transform.rotation)
+  if let (Some(transform), Some(bounds)) = (transform, bounds) {
+    let bounds = bounds.bounds.clone();
+
+    return Some(
+      bounds
+        .translate(transform.position.x, transform.position.y)
+        .rotate(transform.rotation),
+    );
+  }
+  None
 }
 
 fn collision(entity1: EntityId, entity2: EntityId) -> Entity {

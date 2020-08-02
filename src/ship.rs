@@ -6,6 +6,7 @@ use crate::components::PlayerControllable;
 use crate::components::Transform;
 use crate::components::Vulnerable;
 use crate::components::{Damage, DamageType};
+use crate::components::{Tag, TagType};
 use crate::entity::Entity;
 use crate::geometry;
 use ggez::graphics::{self};
@@ -31,6 +32,7 @@ pub fn build_ship(context: &mut Context) -> GameResult<Entity> {
   let drawable = Drawable::new(mesh, Point2::new(25. / 2., 30. / 2.));
   let physics = Physicsable::new(0., 0.);
 
+  entity.register_component(Tag::new(TagType::Ship));
   entity.register_component(transform);
   entity.register_component(drawable);
   entity.register_component(physics);
@@ -62,6 +64,7 @@ pub fn build_bullet(context: &mut Context, x: f32, y: f32, angle: f32) -> GameRe
   let physics = Physicsable::new(velocity.x, velocity.y);
   let expiration = Expirable::new(Duration::from_secs(3));
 
+  entity.register_component(Tag::new(TagType::Bullet));
   entity.register_component(transform);
   entity.register_component(drawable);
   entity.register_component(physics);

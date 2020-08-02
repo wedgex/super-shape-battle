@@ -3,20 +3,24 @@ use std::any::Any;
 mod collidable;
 mod collision;
 mod damage;
+mod damaged;
 mod drawable;
 mod expirable;
 mod physicsable;
 mod player_controllable;
+mod tag;
 mod transform;
 mod vulnerable;
 
 pub use collidable::{Collidable, CollisionBounds};
 pub use collision::Collision;
 pub use damage::{Damage, DamageType};
+pub use damaged::Damaged;
 pub use drawable::Drawable;
 pub use expirable::Expirable;
 pub use physicsable::Physicsable;
 pub use player_controllable::PlayerControllable;
+pub use tag::{Tag, TagType};
 pub use transform::Transform;
 pub use vulnerable::Vulnerable;
 

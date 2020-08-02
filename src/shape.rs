@@ -4,6 +4,7 @@ use crate::components::Physicsable;
 use crate::components::Transform;
 use crate::components::Vulnerable;
 use crate::components::{Damage, DamageType};
+use crate::components::{Tag, TagType};
 use crate::entity::Entity;
 use crate::geometry::rotation_transform;
 use ggez::graphics;
@@ -26,6 +27,7 @@ pub fn octagon(context: &mut Context, x: f32, y: f32) -> GameResult<Entity> {
     octagon_points(),
     RED,
     Point2::new(30.18, 30.18), // https://www.omnicalculator.com/math/octagon
+    3,
   )
 }
 
@@ -37,6 +39,7 @@ pub fn hexagon(context: &mut Context, x: f32, y: f32) -> GameResult<Entity> {
     hexagon_points(),
     YELLOW,
     Point2::new(17.32, 17.32), // https://www.omnicalculator.com/math/hexagon
+    2,
   )
 }
 
@@ -48,6 +51,7 @@ pub fn square(context: &mut Context, x: f32, y: f32) -> GameResult<Entity> {
     square_points(),
     GREEN,
     Point2::new(15.0 / 2., 15.0 / 2.0),
+    1,
   )
 }
 
@@ -58,6 +62,7 @@ pub fn build_shape(
   points: Vec<Point2<f32>>,
   color: Color,
   offset: Point2<f32>,
+  level: u8,
 ) -> GameResult<Entity> {
   let mut entity = Entity::new();
 
@@ -67,6 +72,7 @@ pub fn build_shape(
   let mut physics = Physicsable::new(0., 0.);
   physics.velocity = Vector2::new(1., 1.);
 
+  entity.register_component(Tag::new(TagType::Shape(level)));
   entity.register_component(transform);
   entity.register_component(drawable);
   entity.register_component(physics);
