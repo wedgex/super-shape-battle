@@ -6,6 +6,7 @@ use crate::systems::DrawSystem;
 use crate::systems::ExpirationSystem;
 use crate::systems::PhysicsSystem;
 use crate::systems::PlayerInputSystem;
+use crate::systems::ShapeManager;
 use crate::systems::ShipManager;
 use ggez::event;
 use ggez::graphics;
@@ -95,6 +96,7 @@ impl event::EventHandler for GameState {
     CollisionSystem::update(self, ctx)?;
     DamageSystem::update(self, ctx)?;
     ShipManager::update(self, ctx)?;
+    ShapeManager::update(self, ctx)?;
 
     Ok(())
   }

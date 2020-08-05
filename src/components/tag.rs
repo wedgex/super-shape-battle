@@ -3,7 +3,7 @@ use std::fmt;
 
 use super::Component;
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub enum TagType {
   Ship,
   Shape(u8),
