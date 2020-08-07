@@ -8,6 +8,7 @@ mod geometry;
 mod shape;
 mod ship;
 mod systems;
+mod world;
 
 use game::GameState;
 
