@@ -6,6 +6,7 @@ use super::Component;
 
 pub type CollisionBounds = Polygon<f32>;
 
+#[derive(Clone)]
 pub struct Collidable {
   pub bounds: CollisionBounds,
 }

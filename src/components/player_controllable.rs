@@ -2,6 +2,7 @@ use super::Component;
 use std::any::Any;
 use std::time::{Duration, Instant};
 
+#[derive(Clone)]
 pub struct PlayerControllable {
   pub last_fired: Instant,
 }

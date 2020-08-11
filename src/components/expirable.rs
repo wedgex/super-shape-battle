@@ -3,6 +3,7 @@ use std::time::{Duration, Instant};
 
 use super::Component;
 
+#[derive(Clone)]
 pub struct Expirable {
   pub created: Instant,
   pub expiration: Duration,

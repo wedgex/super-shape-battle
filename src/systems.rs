@@ -1,4 +1,4 @@
-use super::game::GameState;
+use crate::world::World;
 use ggez::Context;
 use ggez::GameResult;
 
@@ -21,5 +21,5 @@ pub use shape_manager::ShapeManager;
 pub use ship_manager::ShipManager;
 
 pub trait System {
-  fn update(game: &mut GameState, context: &mut Context) -> GameResult;
+  fn update(world: &mut World, context: &mut Context) -> GameResult;
 }

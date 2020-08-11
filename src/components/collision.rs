@@ -3,6 +3,7 @@ use std::any::Any;
 
 use super::Component;
 
+#[derive(Clone)]
 pub struct Collision {
   pub entity1: EntityId,
   pub entity2: EntityId,

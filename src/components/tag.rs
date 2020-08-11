@@ -22,6 +22,7 @@ impl fmt::Display for TagType {
   }
 }
 
+#[derive(Clone)]
 pub struct Tag {
   pub tag_type: TagType,
 }

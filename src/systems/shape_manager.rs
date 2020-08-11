@@ -2,66 +2,55 @@ use super::System;
 use crate::components::Damaged;
 use crate::components::Transform;
 use crate::components::{Tag, TagType};
-use crate::entity::Entity;
 use crate::entity::EntityId;
-use crate::game::GameState;
 use crate::shape;
+use crate::world::World;
 use ggez::nalgebra::Point2;
 use ggez::{Context, GameResult};
 
 pub struct ShapeManager;
 
 impl System for ShapeManager {
-  fn update(game: &mut GameState, ctx: &mut Context) -> GameResult {
-    let shapes: Vec<EntityId> = game
-      .entities_with::<Tag>()
-      .into_iter()
-      .filter(|e| {
-        if let Some(tag) = e.get_component::<Tag>() {
-          if let TagType::Shape(_) = tag.tag_type {
-            return true;
-          };
-        }
-        false
-      })
-      .map(|d| d.id)
-      .collect();
+  fn update(world: &mut World, ctx: &mut Context) -> GameResult {
+    let is_shape = |e: &EntityId| {
+      if let Some(tag) = world.get::<Tag>(e) {
+        if let TagType::Shape(_) = tag.tag_type {
+          return true;
+        };
+      }
+      false
+    };
 
-    let damaged: Vec<EntityId> = game
-      .get_components::<Damaged>()
-      .iter()
-      .map(|d| d.entity_id)
-      .collect();
-
-    let damaged_shapes: Vec<EntityId> = shapes
+    // TODO this either needs some sort of query or to be moved to an event system
+    let damaged_shapes: Vec<EntityId> = world
+      .components::<Damaged>()
       .into_iter()
-      .filter(|eid| damaged.contains(eid))
+      .map(|d| d.entity_id.clone())
+      .filter(is_shape)
       .collect();
 
     for eid in damaged_shapes {
-      let tag = game.get_component::<Tag>(eid).map(|t| t.tag_type.clone());
-      let transform = game.get_component::<Transform>(eid);
+      let tag = world.get::<Tag>(&eid).map(|t| t.tag_type.clone());
+      let transform = world.get::<Transform>(&eid);
       if let (Some(TagType::Shape(level)), Some(transform)) = (tag, transform) {
-        if let Some(shape) = build_shape(level - 1, transform.position, ctx) {
-          game.entities.push(shape);
-        }
+        build_shape(world, level - 1, transform.position, ctx);
       }
+      world.remove(&eid);
     }
-
-    game.entities.retain(|e| !damaged.contains(&e.id));
 
     Ok(())
   }
 }
 
-fn build_shape(level: u8, position: Point2<f32>, context: &mut Context) -> Option<Entity> {
+fn build_shape(
+  world: &mut World,
+  level: u8,
+  position: Point2<f32>,
+  context: &mut Context,
+) -> GameResult<()> {
   match level {
-    2 => shape::hexagon(context, position.x, position.y)
-      .map(Some)
-      .unwrap_or(None),
-    1 => shape::square(context, position.x, position.y)
-      .map(Some)
-      .unwrap_or(None),
-    _ => None,
+    2 => shape::hexagon(world, context, position.x, position.y),
+    1 => shape::square(world, context, position.x, position.y),
+    _ => Ok(()),
   }
 }

@@ -1,7 +1,7 @@
 use crate::components::Physicsable;
 use crate::components::Transform;
 use crate::entity::EntityId;
-use crate::game::GameState;
+use crate::world::World;
 use ggez::graphics;
 use ggez::Context;
 use ggez::GameResult;
@@ -13,25 +13,25 @@ const MAX_VELOCITY: f32 = 5.0;
 pub struct PhysicsSystem;
 
 impl System for PhysicsSystem {
-  fn update(game: &mut GameState, context: &mut Context) -> GameResult {
-    let entities: Vec<EntityId> = game
-      .entities_with::<Physicsable>()
-      .iter()
-      .map(|e| e.id)
+  fn update(world: &mut World, context: &mut Context) -> GameResult {
+    let entities: Vec<EntityId> = world
+      .entities::<Physicsable>()
+      .into_iter()
+      .cloned()
       .collect();
 
     for entity_id in entities {
-      handle_acceleration(game, entity_id);
-      handle_velocity(game, entity_id);
-      wrap_position(game, context, entity_id);
+      handle_acceleration(world, &entity_id);
+      handle_velocity(world, &entity_id);
+      wrap_position(world, context, &entity_id);
     }
 
     Ok(())
   }
 }
 
-fn handle_acceleration(game: &mut GameState, entity_id: EntityId) {
-  if let Some(physics) = game.get_component_mut::<Physicsable>(entity_id) {
+fn handle_acceleration(world: &mut World, entity: &EntityId) {
+  if let Some(physics) = world.get_mut::<Physicsable>(entity) {
     physics.velocity += physics.acceleration;
     if physics.velocity.norm_squared() > MAX_VELOCITY.powi(2) {
       physics.velocity = physics.velocity / physics.velocity.norm_squared().sqrt() * MAX_VELOCITY;
@@ -39,17 +39,17 @@ fn handle_acceleration(game: &mut GameState, entity_id: EntityId) {
   }
 }
 
-fn handle_velocity(game: &mut GameState, entity_id: EntityId) {
-  if let Some(physics) = game.get_component::<Physicsable>(entity_id) {
+fn handle_velocity(world: &mut World, entity: &EntityId) {
+  if let Some(physics) = world.get::<Physicsable>(entity) {
     let velocity = physics.velocity.clone();
-    if let Some(position) = game.get_component_mut::<Transform>(entity_id) {
+    if let Some(position) = world.get_mut::<Transform>(entity) {
       position.position += velocity;
     }
   }
 }
 
-fn wrap_position(game: &mut GameState, context: &mut Context, entity_id: EntityId) {
-  if let Some(position) = game.get_component_mut::<Transform>(entity_id) {
+fn wrap_position(world: &mut World, context: &mut Context, entity: &EntityId) {
+  if let Some(position) = world.get_mut::<Transform>(entity) {
     let (screen_width, screen_height) = graphics::drawable_size(context);
 
     if position.position.x < 0.0 {

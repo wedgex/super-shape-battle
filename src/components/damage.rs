@@ -8,6 +8,7 @@ pub enum DamageType {
   Smash,
 }
 
+#[derive(Clone)]
 pub struct Damage {
   pub damage_type: DamageType,
 }

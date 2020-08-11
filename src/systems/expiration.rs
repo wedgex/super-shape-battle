@@ -1,22 +1,31 @@
 use super::System;
 use crate::components::Expirable;
-use crate::entity::Entity;
-use crate::game::GameState;
+use crate::entity::EntityId;
+use crate::world::World;
 use ggez::Context;
 use ggez::GameResult;
 
 pub struct ExpirationSystem;
 
 impl System for ExpirationSystem {
-  fn update(game: &mut GameState, _context: &mut Context) -> GameResult {
-    game.entities.retain(|e| should_keep(e));
+  fn update(world: &mut World, _context: &mut Context) -> GameResult {
+    let expired: Vec<EntityId> = world
+      .entities::<Expirable>()
+      .into_iter()
+      .cloned()
+      .filter(|e| !should_keep(world, &e))
+      .collect();
+
+    for entity in expired {
+      world.remove(&entity);
+    }
 
     Ok(())
   }
 }
 
-fn should_keep(entity: &Entity) -> bool {
-  entity
-    .get_component::<Expirable>()
+fn should_keep(world: &World, entity: &EntityId) -> bool {
+  world
+    .get::<Expirable>(entity)
     .map_or(true, |e| !e.is_expired())
 }

@@ -3,6 +3,7 @@ use std::any::Any;
 
 use super::Component;
 
+#[derive(Clone)]
 pub struct Damaged {
   pub entity_id: EntityId,
 }

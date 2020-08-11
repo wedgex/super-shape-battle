@@ -3,6 +3,7 @@ use std::any::Any;
 
 use super::Component;
 
+#[derive(Clone)]
 pub struct Physicsable {
   pub velocity: Vector2<f32>,
   pub acceleration: Vector2<f32>,

@@ -7,8 +7,8 @@ use crate::components::Transform;
 use crate::components::Vulnerable;
 use crate::components::{Damage, DamageType};
 use crate::components::{Tag, TagType};
-use crate::entity::Entity;
 use crate::geometry;
+use crate::world::World;
 use ggez::graphics::{self};
 use ggez::nalgebra::Point2;
 use ggez::Context;
@@ -16,8 +16,8 @@ use ggez::GameResult;
 use graphics::Mesh;
 use std::time::Duration;
 
-pub fn build_ship(context: &mut Context) -> GameResult<Entity> {
-  let mut entity = Entity::new();
+pub fn build_ship(world: &mut World, context: &mut Context) -> GameResult<()> {
+  let entity = world.create_entity();
 
   let points = ship_points();
 
@@ -32,19 +32,25 @@ pub fn build_ship(context: &mut Context) -> GameResult<Entity> {
   let drawable = Drawable::new(mesh, Point2::new(25. / 2., 30. / 2.));
   let physics = Physicsable::new(0., 0.);
 
-  entity.register_component(Tag::new(TagType::Ship));
-  entity.register_component(transform);
-  entity.register_component(drawable);
-  entity.register_component(physics);
-  entity.register_component(Collidable::new(points.clone()));
-  entity.register_component(PlayerControllable::new());
-  entity.register_component(Vulnerable::new(vec![DamageType::Smash]));
+  world.add(&entity, Tag::new(TagType::Ship));
+  world.add(&entity, transform);
+  world.add(&entity, drawable);
+  world.add(&entity, physics);
+  world.add(&entity, Collidable::new(points.clone()));
+  world.add(&entity, PlayerControllable::new());
+  world.add(&entity, Vulnerable::new(vec![DamageType::Smash]));
 
-  Ok(entity)
+  Ok(())
 }
 
-pub fn build_bullet(context: &mut Context, x: f32, y: f32, angle: f32) -> GameResult<Entity> {
-  let mut entity = Entity::new();
+pub fn build_bullet(
+  world: &mut World,
+  context: &mut Context,
+  x: f32,
+  y: f32,
+  angle: f32,
+) -> GameResult<()> {
+  let entity = world.create_entity();
   let transform = Transform::new(x, y);
   let points = vec![
     Point2::new(0.0, 0.0),
@@ -64,15 +70,15 @@ pub fn build_bullet(context: &mut Context, x: f32, y: f32, angle: f32) -> GameRe
   let physics = Physicsable::new(velocity.x, velocity.y);
   let expiration = Expirable::new(Duration::from_secs(3));
 
-  entity.register_component(Tag::new(TagType::Bullet));
-  entity.register_component(transform);
-  entity.register_component(drawable);
-  entity.register_component(physics);
-  entity.register_component(expiration);
-  entity.register_component(Collidable::new(points.clone()));
-  entity.register_component(Damage::new(DamageType::Projectile));
+  world.add(&entity, Tag::new(TagType::Bullet));
+  world.add(&entity, transform);
+  world.add(&entity, drawable);
+  world.add(&entity, physics);
+  world.add(&entity, expiration);
+  world.add(&entity, Collidable::new(points.clone()));
+  world.add(&entity, Damage::new(DamageType::Projectile));
 
-  Ok(entity)
+  Ok(())
 }
 
 fn ship_points() -> Vec<Point2<f32>> {

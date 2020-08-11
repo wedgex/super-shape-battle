@@ -1,30 +1,31 @@
 use crate::components::Drawable;
 use crate::components::Transform;
-use crate::entity::Entity;
-use crate::game::GameState;
+use crate::entity::EntityId;
+use crate::world::World;
 use ggez::graphics;
 use ggez::Context;
 use ggez::GameResult;
+use std::any::TypeId;
 
 use super::System;
 
 pub struct DrawSystem;
 
 impl System for DrawSystem {
-  fn update(game: &mut GameState, context: &mut Context) -> GameResult {
-    let drawables: Vec<&Entity> = game.entities_with::<Drawable>().into_iter().collect();
+  fn update(world: &mut World, context: &mut Context) -> GameResult {
+    let drawables = world.entities_with(vec![TypeId::of::<Drawable>(), TypeId::of::<Transform>()]);
 
     for drawable in drawables {
-      draw(drawable, context)?
+      draw(world, drawable, context)?
     }
 
     Ok(())
   }
 }
 
-fn draw(entity: &Entity, context: &mut Context) -> GameResult {
-  let drawable = entity.get_component::<Drawable>();
-  let transform = entity.get_component::<Transform>();
+fn draw(world: &World, eid: &EntityId, context: &mut Context) -> GameResult {
+  let drawable = world.get::<Drawable>(eid);
+  let transform = world.get::<Transform>(eid);
 
   if let (Some(drawable), Some(transform)) = (drawable, transform) {
     graphics::draw(

@@ -4,6 +4,7 @@ use std::any::Any;
 
 use super::Component;
 
+#[derive(Clone)]
 pub struct Drawable {
   pub mesh: Mesh,
   pub offset: Point2<f32>,

@@ -24,7 +24,15 @@ pub use tag::{Tag, TagType};
 pub use transform::Transform;
 pub use vulnerable::Vulnerable;
 
-pub trait Component: Any {
+pub trait Component: Any + 'static {
   fn as_any(&self) -> &dyn Any;
   fn as_any_mut(&mut self) -> &mut dyn Any;
+}
+
+pub fn downcast<T: Component>(c: &Box<dyn Component>) -> Option<&T> {
+  c.as_any().downcast_ref::<T>()
+}
+
+pub fn downcast_mut<T: Component>(c: &mut Box<dyn Component>) -> Option<&mut T> {
+  c.as_any_mut().downcast_mut::<T>()
 }

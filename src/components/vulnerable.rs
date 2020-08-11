@@ -3,6 +3,7 @@ use std::any::Any;
 
 use super::Component;
 
+#[derive(Clone)]
 pub struct Vulnerable {
   pub damage_types: Vec<DamageType>,
 }

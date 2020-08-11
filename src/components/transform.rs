@@ -2,6 +2,7 @@ use super::Component;
 use ggez::nalgebra::Point2;
 use std::any::Any;
 
+#[derive(Clone)]
 pub struct Transform {
   pub position: Point2<f32>,
   pub rotation: f32,
