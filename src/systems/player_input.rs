@@ -26,7 +26,7 @@ impl System for PlayerInputSystem {
 
     for entity_id in entities {
       apply_inputs_to(world, context, &entity_id);
-      handle_fire(world, context, &entity_id);
+      handle_fire(world, context, &entity_id)?;
     }
 
     Ok(())
@@ -56,7 +56,7 @@ fn apply_inputs_to(world: &mut World, context: &mut Context, entity: &EntityId) 
   }
 }
 
-fn handle_fire(world: &mut World, context: &mut Context, entity: &EntityId) {
+fn handle_fire(world: &mut World, context: &mut Context, entity: &EntityId) -> GameResult {
   let transform = world.get::<Transform>(entity);
   let position = transform.map(|t| t.position).unwrap_or(Point2::new(0., 0.));
   let rotation = transform.map(|t| t.rotation).unwrap_or(0.0);
@@ -65,10 +65,12 @@ fn handle_fire(world: &mut World, context: &mut Context, entity: &EntityId) {
     if keyboard::is_key_pressed(context, KeyCode::Space) {
       if controllable.last_fired.elapsed().as_secs() > 1 {
         controllable.last_fired = Instant::now();
-        build_bullet(world, context, position.x, position.y, rotation);
+        build_bullet(world, context, position.x, position.y, rotation)?;
       }
     }
   }
+
+  Ok(())
 }
 
 pub fn accelerate(physics: &mut Physicsable, rotation: f32) {

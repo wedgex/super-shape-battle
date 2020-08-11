@@ -31,9 +31,9 @@ impl System for ShapeManager {
 
     for eid in damaged_shapes {
       let tag = world.get::<Tag>(&eid).map(|t| t.tag_type.clone());
-      let transform = world.get::<Transform>(&eid);
-      if let (Some(TagType::Shape(level)), Some(transform)) = (tag, transform) {
-        build_shape(world, level - 1, transform.position, ctx);
+      let transform = world.get::<Transform>(&eid).map(|t| t.position.clone());
+      if let (Some(TagType::Shape(level)), Some(position)) = (tag, transform) {
+        build_shape(world, level - 1, position, ctx)?;
       }
       world.remove(&eid);
     }
