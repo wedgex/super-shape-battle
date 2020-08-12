@@ -5,12 +5,12 @@ use super::Component;
 
 #[derive(Clone)]
 pub struct Damaged {
-  pub entity_id: EntityId,
+  pub entity: EntityId,
 }
 
 impl Damaged {
-  pub fn new(entity_id: EntityId) -> Self {
-    Damaged { entity_id }
+  pub fn new(entity: EntityId) -> Self {
+    Damaged { entity }
   }
 }
 

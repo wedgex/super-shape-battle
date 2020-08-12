@@ -23,9 +23,9 @@ impl System for DrawSystem {
   }
 }
 
-fn draw(world: &World, eid: &EntityId, context: &mut Context) -> GameResult {
-  let drawable = world.get::<Drawable>(eid);
-  let transform = world.get::<Transform>(eid);
+fn draw(world: &World, entity: &EntityId, context: &mut Context) -> GameResult {
+  let drawable = world.get::<Drawable>(entity);
+  let transform = world.get::<Transform>(entity);
 
   if let (Some(drawable), Some(transform)) = (drawable, transform) {
     graphics::draw(

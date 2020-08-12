@@ -25,17 +25,17 @@ impl System for ShapeManager {
     let damaged_shapes: Vec<EntityId> = world
       .components::<Damaged>()
       .into_iter()
-      .map(|d| d.entity_id.clone())
+      .map(|d| d.entity.clone())
       .filter(is_shape)
       .collect();
 
-    for eid in damaged_shapes {
-      let tag = world.get::<Tag>(&eid).map(|t| t.tag_type.clone());
-      let transform = world.get::<Transform>(&eid).map(|t| t.position.clone());
+    for entity in damaged_shapes {
+      let tag = world.get::<Tag>(&entity).map(|t| t.tag_type.clone());
+      let transform = world.get::<Transform>(&entity).map(|t| t.position.clone());
       if let (Some(TagType::Shape(level)), Some(position)) = (tag, transform) {
         build_shape(world, level - 1, position, ctx)?;
       }
-      world.remove(&eid);
+      world.remove(&entity);
     }
 
     Ok(())

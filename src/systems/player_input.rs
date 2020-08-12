@@ -24,9 +24,9 @@ impl System for PlayerInputSystem {
       .cloned()
       .collect();
 
-    for entity_id in entities {
-      apply_inputs_to(world, context, &entity_id);
-      handle_fire(world, context, &entity_id)?;
+    for entity in entities {
+      apply_inputs_to(world, context, &entity);
+      handle_fire(world, context, &entity)?;
     }
 
     Ok(())

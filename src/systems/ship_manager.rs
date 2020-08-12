@@ -13,7 +13,7 @@ impl System for ShipManager {
     let damaged_ships: Vec<EntityId> = world
       .components::<Damaged>()
       .into_iter()
-      .map(|e| e.entity_id.clone())
+      .map(|e| e.entity.clone())
       .filter(|e| {
         if let Some(tag) = world.get::<Tag>(e) {
           return tag.tag_type == TagType::Ship;

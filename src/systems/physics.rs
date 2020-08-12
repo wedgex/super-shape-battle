@@ -20,10 +20,10 @@ impl System for PhysicsSystem {
       .cloned()
       .collect();
 
-    for entity_id in entities {
-      handle_acceleration(world, &entity_id);
-      handle_velocity(world, &entity_id);
-      wrap_position(world, context, &entity_id);
+    for entity in entities {
+      handle_acceleration(world, &entity);
+      handle_velocity(world, &entity);
+      wrap_position(world, context, &entity);
     }
 
     Ok(())

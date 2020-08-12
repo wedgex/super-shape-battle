@@ -43,22 +43,22 @@ impl<'a> World {
       .insert(TypeId::of::<T>(), ComponentManager::new());
   }
 
-  pub fn get<T: Component>(&self, eid: &EntityId) -> Option<&T> {
+  pub fn get<T: Component>(&self, entity: &EntityId) -> Option<&T> {
     self
       .manager::<T>()
-      .and_then(|manager| manager.get::<T>(eid))
+      .and_then(|manager| manager.get::<T>(entity))
   }
 
-  pub fn get_mut<T: Component>(&mut self, eid: &EntityId) -> Option<&mut T> {
+  pub fn get_mut<T: Component>(&mut self, entity: &EntityId) -> Option<&mut T> {
     self
       .manager_mut::<T>()
-      .and_then(|manager| manager.get_mut::<T>(eid))
+      .and_then(|manager| manager.get_mut::<T>(entity))
   }
 
-  pub fn add<T: Component>(&mut self, eid: &EntityId, component: T) {
+  pub fn add<T: Component>(&mut self, entity: &EntityId, component: T) {
     self
       .manager_mut::<T>()
-      .map(|manager| manager.add(eid, component));
+      .map(|manager| manager.add(entity, component));
   }
 
   pub fn remove(&mut self, entity: &EntityId) {
@@ -68,8 +68,10 @@ impl<'a> World {
     }
   }
 
-  pub fn remove_component<T: Component>(&mut self, eid: &EntityId) {
-    self.manager_mut::<T>().map(|manager| manager.remove(eid));
+  pub fn remove_component<T: Component>(&mut self, entity: &EntityId) {
+    self
+      .manager_mut::<T>()
+      .map(|manager| manager.remove(entity));
   }
 
   pub fn components<T: Component>(&self) -> Vec<&T> {
@@ -120,28 +122,28 @@ impl<'a> ComponentManager {
     }
   }
 
-  pub fn get<T: Component>(&self, eid: &EntityId) -> Option<&T> {
-    if let Some(component) = self.entity_map.get(&eid) {
+  pub fn get<T: Component>(&self, entity: &EntityId) -> Option<&T> {
+    if let Some(component) = self.entity_map.get(&entity) {
       return downcast::<T>(component);
     }
 
     None
   }
 
-  pub fn get_mut<T: Component>(&mut self, eid: &EntityId) -> Option<&mut T> {
-    if let Some(component) = self.entity_map.get_mut(&eid) {
+  pub fn get_mut<T: Component>(&mut self, entity: &EntityId) -> Option<&mut T> {
+    if let Some(component) = self.entity_map.get_mut(&entity) {
       return downcast_mut::<T>(component);
     }
 
     None
   }
 
-  pub fn add<T: Component>(&mut self, eid: &EntityId, component: T) {
-    self.entity_map.insert(*eid, Box::new(component));
+  pub fn add<T: Component>(&mut self, entity: &EntityId, component: T) {
+    self.entity_map.insert(*entity, Box::new(component));
   }
 
-  pub fn remove(&mut self, eid: &EntityId) {
-    self.entity_map.remove(eid);
+  pub fn remove(&mut self, entity: &EntityId) {
+    self.entity_map.remove(entity);
   }
 
   pub fn components<T: Component>(&self) -> Vec<&T> {
@@ -192,37 +194,37 @@ mod tests {
     fn can_add_and_remove_components() {
       let mut world = World::new();
 
-      let eid1 = Uuid::new_v4();
-      let eid2 = Uuid::new_v4();
+      let entity1 = world.create_entity();
+      let entity2 = world.create_entity();
 
       let transform1 = Transform::new(0., 0.);
       let transform2 = Transform::new(1., 1.);
       let expiration1 = Expirable::new(Duration::from_secs(1));
       let expiration2 = Expirable::new(Duration::from_secs(2));
 
-      world.add(&eid1, transform1);
-      world.add(&eid2, transform2);
-      world.add(&eid1, expiration1);
-      world.add(&eid2, expiration2);
+      world.add(&entity1, transform1);
+      world.add(&entity2, transform2);
+      world.add(&entity1, expiration1);
+      world.add(&entity2, expiration2);
 
-      let transform1 = world.get::<Transform>(&eid1);
+      let transform1 = world.get::<Transform>(&entity1);
       assert!(transform1.is_some());
       assert_eq!(transform1.unwrap().position, Point2::new(0.0f32, 0.0f32));
 
-      let transform2 = world.get::<Transform>(&eid2);
+      let transform2 = world.get::<Transform>(&entity2);
       assert!(transform2.is_some());
       assert_eq!(transform2.unwrap().position, Point2::new(1.0f32, 1.0f32));
 
-      let expiration2 = world.get::<Expirable>(&eid2);
+      let expiration2 = world.get::<Expirable>(&entity2);
       assert!(expiration2.is_some());
       assert_eq!(expiration2.unwrap().expiration, Duration::from_secs(2));
 
-      world.remove(&eid1);
-      let transform1 = world.get::<Transform>(&eid1);
+      world.remove(&entity1);
+      let transform1 = world.get::<Transform>(&entity1);
       assert!(transform1.is_none());
 
-      world.remove(&eid2);
-      let expiration2 = world.get::<Expirable>(&eid2);
+      world.remove(&entity2);
+      let expiration2 = world.get::<Expirable>(&entity2);
       assert!(expiration2.is_none());
     }
 
@@ -230,21 +232,21 @@ mod tests {
     fn can_reference_entities_by_component_type() {
       let mut world = World::new();
 
-      let eid1 = Uuid::new_v4();
-      let eid2 = Uuid::new_v4();
+      let entity1 = world.create_entity();
+      let entity2 = world.create_entity();
 
       let transform1 = Transform::new(0., 0.);
       let expiration1 = Expirable::new(Duration::from_secs(1));
       let expiration2 = Expirable::new(Duration::from_secs(2));
 
-      let mut expected_transforms = vec![&eid1];
+      let mut expected_transforms = vec![&entity1];
       expected_transforms.sort();
-      let mut expected_expirations = vec![&eid1, &eid2];
+      let mut expected_expirations = vec![&entity1, &entity2];
       expected_expirations.sort();
 
-      world.add(&eid1, transform1);
-      world.add(&eid1, expiration1);
-      world.add(&eid2, expiration2);
+      world.add(&entity1, transform1);
+      world.add(&entity1, expiration1);
+      world.add(&entity2, expiration2);
 
       let transforms = world.entities::<Transform>();
       let expirations = world.entities::<Expirable>();
@@ -256,8 +258,8 @@ mod tests {
     #[test]
     fn can_reference_components_by_type() {
       let mut world = World::new();
-      let eid1 = Uuid::new_v4();
-      let eid2 = Uuid::new_v4();
+      let entity1 = world.create_entity();
+      let entity2 = world.create_entity();
 
       let transform1 = Transform::new(0., 0.);
       let expiration1 = Expirable::new(Duration::from_secs(1));
@@ -265,9 +267,9 @@ mod tests {
       let expected_points = vec![Point2::new(0.0f32, 0.0f32)];
       let expected_durations = vec![Duration::from_secs(1), Duration::from_secs(2)];
 
-      world.add(&eid1, transform1);
-      world.add(&eid1, expiration1);
-      world.add(&eid2, expiration2);
+      world.add(&entity1, transform1);
+      world.add(&entity1, expiration1);
+      world.add(&entity2, expiration2);
 
       let transforms = world.components::<Transform>();
       let expirations = world.components::<Expirable>();
@@ -323,23 +325,23 @@ mod tests {
     fn can_add_and_remove_components() {
       let transform1 = Transform::new(0., 0.);
       let transform2 = Transform::new(1., 1.);
-      let eid1 = Uuid::new_v4();
-      let eid2 = Uuid::new_v4();
+      let entity1 = Uuid::new_v4();
+      let entity2 = Uuid::new_v4();
 
       let mut component_manager = ComponentManager::new();
 
-      component_manager.add(&eid1, transform1);
-      component_manager.add(&eid2, transform2);
+      component_manager.add(&entity1, transform1);
+      component_manager.add(&entity2, transform2);
 
-      let transform1 = component_manager.get::<Transform>(&eid1);
+      let transform1 = component_manager.get::<Transform>(&entity1);
       assert!(transform1.is_some());
       assert_eq!(transform1.unwrap().position, Point2::new(0.0f32, 0.0f32));
 
-      component_manager.remove(&eid1);
-      let transform1 = component_manager.get::<Transform>(&eid1);
+      component_manager.remove(&entity1);
+      let transform1 = component_manager.get::<Transform>(&entity1);
       assert!(transform1.is_none());
 
-      let transform2 = component_manager.get::<Transform>(&eid2);
+      let transform2 = component_manager.get::<Transform>(&entity2);
       assert!(transform2.is_some());
       assert_eq!(transform2.unwrap().position, Point2::new(1.0f32, 1.0f32));
     }
@@ -348,17 +350,17 @@ mod tests {
     fn can_reference_entity_ids() {
       let transform1 = Transform::new(0., 0.);
       let transform2 = Transform::new(1., 1.);
-      let eid1 = Uuid::new_v4();
-      let eid2 = Uuid::new_v4();
-      let expected_eid1 = eid1.clone();
-      let expected_eid2 = eid2.clone();
-      let mut expected_entities = [&expected_eid1, &expected_eid2];
+      let entity1 = Uuid::new_v4();
+      let entity2 = Uuid::new_v4();
+      let expected1 = entity1.clone();
+      let expected2 = entity2.clone();
+      let mut expected_entities = [&expected1, &expected2];
       expected_entities.sort();
 
       let mut component_manager = ComponentManager::new();
 
-      component_manager.add(&eid1, transform1);
-      component_manager.add(&eid2, transform2);
+      component_manager.add(&entity1, transform1);
+      component_manager.add(&entity2, transform2);
 
       let mut entities = component_manager.entities();
       entities.sort();
@@ -370,15 +372,15 @@ mod tests {
     fn can_reference_components() {
       let transform1 = Transform::new(0., 0.);
       let transform2 = Transform::new(1., 1.);
-      let eid1 = Uuid::new_v4();
-      let eid2 = Uuid::new_v4();
+      let entity1 = Uuid::new_v4();
+      let entity2 = Uuid::new_v4();
       let expected_point1 = transform1.position.clone();
       let expected_point2 = transform2.position.clone();
 
       let mut component_manager = ComponentManager::new();
 
-      component_manager.add(&eid1, transform1);
-      component_manager.add(&eid2, transform2);
+      component_manager.add(&entity1, transform1);
+      component_manager.add(&entity2, transform2);
 
       let transforms: Vec<&Transform> = component_manager.components().into_iter().collect();
 
