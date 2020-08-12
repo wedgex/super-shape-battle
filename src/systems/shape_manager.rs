@@ -1,9 +1,6 @@
 use super::System;
-use crate::components::Damaged;
-use crate::components::Transform;
-use crate::components::{Tag, TagType};
-use crate::entity::EntityId;
-use crate::shape;
+use crate::components::{Damaged, Tag, TagType, Transform};
+use crate::entity::{EntityId, Hexagon, Square};
 use crate::world::World;
 use ggez::nalgebra::Point2;
 use ggez::{Context, GameResult};
@@ -47,10 +44,12 @@ fn build_shape(
   level: u8,
   position: Point2<f32>,
   context: &mut Context,
-) -> GameResult<()> {
+) -> GameResult {
   match level {
-    2 => shape::hexagon(world, context, position.x, position.y),
-    1 => shape::square(world, context, position.x, position.y),
-    _ => Ok(()),
-  }
+    2 => Some(Hexagon::create(world, context, position.x, position.y)?),
+    1 => Some(Square::create(world, context, position.x, position.y)?),
+    _ => None,
+  };
+
+  Ok(())
 }

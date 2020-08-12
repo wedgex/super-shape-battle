@@ -1,9 +1,8 @@
 use crate::components::Physicsable;
 use crate::components::PlayerControllable;
 use crate::components::Transform;
-use crate::entity::EntityId;
+use crate::entity::{Bullet, EntityId};
 use crate::geometry;
-use crate::ship::build_bullet;
 use crate::world::World;
 use ggez::event::KeyCode;
 use ggez::input::keyboard;
@@ -61,7 +60,7 @@ fn handle_fire(world: &mut World, context: &mut Context, entity: &EntityId) -> G
     if keyboard::is_key_pressed(context, KeyCode::Space) {
       if controllable.last_fired.elapsed().as_secs() > 1 {
         controllable.last_fired = Instant::now();
-        build_bullet(world, context, position.x, position.y, rotation)?;
+        Bullet::create(world, context, position.x, position.y, rotation)?;
       }
     }
   }

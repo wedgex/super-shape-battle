@@ -2,7 +2,7 @@ use super::System;
 use crate::components::Damaged;
 use crate::components::{Tag, TagType};
 use crate::entity::EntityId;
-use crate::ship;
+use crate::entity::Ship;
 use crate::world::World;
 use ggez::{Context, GameResult};
 
@@ -32,7 +32,7 @@ impl System for ShipManager {
 
     // add new ship
     if damaged_ships.len() > 0 {
-      ship::build_ship(world, ctx)?;
+      Ship::create(world, ctx)?;
     }
 
     Ok(())
