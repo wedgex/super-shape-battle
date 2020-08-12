@@ -22,10 +22,6 @@ impl System for ShipManager {
       })
       .collect();
 
-    for entity in damaged_ships.iter() {
-      world.remove(entity);
-    }
-
     // display death animation
 
     // delay
@@ -34,6 +30,8 @@ impl System for ShipManager {
     if damaged_ships.len() > 0 {
       Ship::create(world, ctx)?;
     }
+
+    world.remove_all(damaged_ships);
 
     Ok(())
   }

@@ -12,11 +12,7 @@ pub struct DamageSystem;
 
 impl System for DamageSystem {
   fn update(world: &mut World, _context: &mut Context) -> GameResult {
-    let damaged: Vec<EntityId> = world.entities::<Damaged>();
-
-    for entity in damaged {
-      world.remove(&entity);
-    }
+    world.remove_all(world.entities::<Damaged>());
 
     let mut damaged: Vec<Damaged> = vec![];
     let collisions: Vec<(EntityId, EntityId)> = world

@@ -15,10 +15,7 @@ pub struct CollisionSystem;
 
 impl System for CollisionSystem {
   fn update(world: &mut World, _context: &mut Context) -> GameResult {
-    let old_collisions: Vec<EntityId> = world.entities::<Collision>();
-    for old_collision in old_collisions {
-      world.remove(&old_collision);
-    }
+    world.remove_all(world.entities::<Collision>());
 
     let mut entities: Vec<EntityId> =
       world.entities_with(vec![TypeId::of::<Collidable>(), TypeId::of::<Transform>()]);

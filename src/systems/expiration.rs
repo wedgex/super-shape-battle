@@ -15,9 +15,7 @@ impl System for ExpirationSystem {
       .filter(|e| !should_keep(world, &e))
       .collect();
 
-    for entity in expired {
-      world.remove(&entity);
-    }
+    world.remove_all(expired);
 
     Ok(())
   }

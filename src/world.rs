@@ -68,6 +68,12 @@ impl<'a> World {
     }
   }
 
+  pub fn remove_all(&mut self, entities: Vec<EntityId>) {
+    for entity in entities {
+      self.remove(&entity);
+    }
+  }
+
   pub fn remove_component<T: Component>(&mut self, entity: &EntityId) {
     self
       .manager_mut::<T>()
