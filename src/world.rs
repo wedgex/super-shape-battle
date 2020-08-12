@@ -5,6 +5,7 @@ use crate::components::{
   PlayerControllable, Tag, Transform, Vulnerable,
 };
 use crate::entity::EntityId;
+use crate::vec::intersections;
 use std::any::TypeId;
 use std::collections::HashMap;
 use uuid::Uuid;
@@ -159,29 +160,6 @@ impl<'a> ComponentManager {
   pub fn entities(&self) -> Vec<EntityId> {
     self.entity_map.keys().cloned().collect()
   }
-}
-
-fn intersection<T: std::cmp::PartialEq>(vec1: Vec<T>, vec2: Vec<T>) -> Vec<T> {
-  let mut intersection: Vec<T> = vec![];
-
-  for item in vec1.into_iter() {
-    if vec2.contains(&item) {
-      intersection.push(item);
-    }
-  }
-
-  intersection
-}
-
-fn intersections<T: std::cmp::PartialEq>(mut sets: Vec<Vec<T>>) -> Vec<T> {
-  match (sets.pop(), sets.pop()) {
-    (Some(set1), Some(set2)) => {
-      sets.push(intersection(set1, set2));
-      return intersections(sets);
-    }
-    (Some(set1), None) => return set1,
-    _ => return vec![],
-  };
 }
 
 #[cfg(test)]

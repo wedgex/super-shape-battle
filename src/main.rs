@@ -4,10 +4,12 @@ use ggez::{ContextBuilder, GameResult};
 
 mod components;
 mod entity;
+mod events;
 mod game;
 mod geometry;
 mod iter;
 mod systems;
+mod vec;
 mod world;
 
 use game::GameState;
