@@ -14,11 +14,7 @@ pub struct PhysicsSystem;
 
 impl System for PhysicsSystem {
   fn update(world: &mut World, context: &mut Context) -> GameResult {
-    let entities: Vec<EntityId> = world
-      .entities::<Physicsable>()
-      .into_iter()
-      .cloned()
-      .collect();
+    let entities: Vec<EntityId> = world.entities::<Physicsable>();
 
     for entity in entities {
       handle_acceleration(world, &entity);

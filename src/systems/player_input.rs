@@ -18,11 +18,7 @@ pub struct PlayerInputSystem;
 
 impl System for PlayerInputSystem {
   fn update(world: &mut World, context: &mut Context) -> GameResult {
-    let entities: Vec<EntityId> = world
-      .entities::<PlayerControllable>()
-      .into_iter()
-      .cloned()
-      .collect();
+    let entities: Vec<EntityId> = world.entities::<PlayerControllable>();
 
     for entity in entities {
       apply_inputs_to(world, context, &entity);

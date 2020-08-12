@@ -12,7 +12,6 @@ impl System for ExpirationSystem {
     let expired: Vec<EntityId> = world
       .entities::<Expirable>()
       .into_iter()
-      .cloned()
       .filter(|e| !should_keep(world, &e))
       .collect();
 

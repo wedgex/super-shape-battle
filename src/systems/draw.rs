@@ -16,7 +16,7 @@ impl System for DrawSystem {
     let drawables = world.entities_with(vec![TypeId::of::<Drawable>(), TypeId::of::<Transform>()]);
 
     for drawable in drawables {
-      draw(world, drawable, context)?
+      draw(world, &drawable, context)?
     }
 
     Ok(())

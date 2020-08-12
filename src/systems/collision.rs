@@ -15,17 +15,13 @@ pub struct CollisionSystem;
 
 impl System for CollisionSystem {
   fn update(world: &mut World, _context: &mut Context) -> GameResult {
-    let old_collisions: Vec<EntityId> =
-      world.entities::<Collision>().into_iter().cloned().collect();
+    let old_collisions: Vec<EntityId> = world.entities::<Collision>();
     for old_collision in old_collisions {
       world.remove(&old_collision);
     }
 
-    let mut entities: Vec<EntityId> = world
-      .entities_with(vec![TypeId::of::<Collidable>(), TypeId::of::<Transform>()])
-      .into_iter()
-      .cloned()
-      .collect();
+    let mut entities: Vec<EntityId> =
+      world.entities_with(vec![TypeId::of::<Collidable>(), TypeId::of::<Transform>()]);
 
     while let Some(entity1) = entities.pop() {
       for entity2 in &entities {

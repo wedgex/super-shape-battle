@@ -82,7 +82,7 @@ impl<'a> World {
     vec![]
   }
 
-  pub fn entities<T: Component>(&self) -> Vec<&EntityId> {
+  pub fn entities<T: Component>(&self) -> Vec<EntityId> {
     if let Some(manager) = self.manager::<T>() {
       return manager.entities().into_iter().collect();
     }
@@ -90,7 +90,7 @@ impl<'a> World {
     vec![]
   }
 
-  pub fn entities_with(&self, components: Vec<TypeId>) -> Vec<&EntityId> {
+  pub fn entities_with(&self, components: Vec<TypeId>) -> Vec<EntityId> {
     let managers = components
       .iter()
       .filter_map(|c| self.component_managers.get(c));
@@ -150,8 +150,8 @@ impl<'a> ComponentManager {
     self.entity_map.values().filter_map(downcast::<T>).collect()
   }
 
-  pub fn entities(&self) -> Vec<&EntityId> {
-    self.entity_map.keys().collect()
+  pub fn entities(&self) -> Vec<EntityId> {
+    self.entity_map.keys().cloned().collect()
   }
 }
 
@@ -188,7 +188,6 @@ mod tests {
     use crate::components::Transform;
     use ggez::nalgebra::Point2;
     use std::time::Duration;
-    use uuid::Uuid;
 
     #[test]
     fn can_add_and_remove_components() {
@@ -311,7 +310,7 @@ mod tests {
         world.entities_with(vec![TypeId::of::<Transform>(), TypeId::of::<Expirable>()]);
 
       assert_eq!(entities.len(), 1);
-      assert_eq!(*entities[0], entity1);
+      assert_eq!(entities[0], entity1);
     }
   }
 
@@ -352,9 +351,7 @@ mod tests {
       let transform2 = Transform::new(1., 1.);
       let entity1 = Uuid::new_v4();
       let entity2 = Uuid::new_v4();
-      let expected1 = entity1.clone();
-      let expected2 = entity2.clone();
-      let mut expected_entities = [&expected1, &expected2];
+      let mut expected_entities = [entity1.clone(), entity2.clone()];
       expected_entities.sort();
 
       let mut component_manager = ComponentManager::new();
