@@ -278,23 +278,14 @@ mod tests {
 
       let transforms = world.components::<Transform>();
       let expirations = world.components::<Expirable>();
+      let points: Vec<Point2<f32>> = transforms.iter().map(|t| t.position).collect();
+      let durations: Vec<Duration> = expirations.iter().map(|t| t.expiration).collect();
 
       assert_eq!(transforms.len(), 1);
-      assert_eq!(
-        transforms
-          .iter()
-          .map(|t| t.position)
-          .collect::<Vec<Point2<f32>>>(),
-        expected_points
-      );
+      assert_contains_all(points, expected_points);
+
       assert_eq!(expirations.len(), 2);
-      assert_eq!(
-        expirations
-          .iter()
-          .map(|t| t.expiration)
-          .collect::<Vec<Duration>>(),
-        expected_durations
-      );
+      assert_contains_all(durations, expected_durations);
     }
 
     #[test]
@@ -357,18 +348,16 @@ mod tests {
       let transform2 = Transform::new(1., 1.);
       let entity1 = Uuid::new_v4();
       let entity2 = Uuid::new_v4();
-      let mut expected_entities = [entity1.clone(), entity2.clone()];
-      expected_entities.sort();
+      let expected_entities = [entity1.clone(), entity2.clone()].to_vec();
 
       let mut component_manager = ComponentManager::new();
 
       component_manager.add(&entity1, transform1);
       component_manager.add(&entity2, transform2);
 
-      let mut entities = component_manager.entities();
-      entities.sort();
+      let entities = component_manager.entities();
 
-      assert_eq!(entities, expected_entities);
+      assert_contains_all(entities, expected_entities);
     }
 
     #[test]
@@ -393,59 +382,9 @@ mod tests {
     }
   }
 
-  mod intersections {
-    use super::*;
-
-    #[test]
-    fn intersection_empty_for_empty_vecs() {
-      let v1: Vec<&str> = vec![];
-      let v2: Vec<&str> = vec![];
-
-      assert_eq!(intersection(v1, v2).len(), 0);
-    }
-
-    #[test]
-    fn intersection_empty_without_overlap() {
-      let v1: Vec<&str> = vec!["1", "2"];
-      let v2: Vec<&str> = vec!["4", "3"];
-
-      let result = intersection(v1, v2);
-
-      assert_eq!(result.len(), 0);
-    }
-
-    #[test]
-    fn intersection_with_overlap() {
-      let v1: Vec<&str> = vec!["1", "3", "2"];
-      let v2: Vec<&str> = vec!["2", "4", "3"];
-
-      let result = intersection(v1, v2);
-
-      assert_eq!(result.len(), 2);
-      assert_eq!(result, vec!["3", "2"]);
-    }
-
-    #[test]
-    fn intersections_with_no_overlap() {
-      let sets = vec![vec!["1", "2"], vec!["3", "4"], vec!["5", "6"]];
-
-      let result = intersections(sets);
-
-      assert_eq!(result.len(), 0);
-    }
-
-    #[test]
-    fn intersections_with_overlap() {
-      let sets = vec![
-        vec!["1", "2", "5"],
-        vec!["3", "1", "4", "5"],
-        vec!["5", "6", "1"],
-      ];
-
-      let result = intersections(sets);
-
-      assert_eq!(result.len(), 2);
-      assert_eq!(result, vec!["5", "1"]);
+  fn assert_contains_all<T: std::cmp::PartialEq>(v1: Vec<T>, v2: Vec<T>) {
+    for v in v2 {
+      assert!(v1.contains(&v));
     }
   }
 }
