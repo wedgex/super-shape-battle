@@ -9,6 +9,7 @@ mod components;
 mod entity;
 mod game;
 mod geometry;
+mod iter;
 mod shape;
 mod ship;
 mod systems;
