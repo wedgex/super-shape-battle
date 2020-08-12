@@ -110,67 +110,42 @@ impl<'a> World {
 type SomeComponent = Box<dyn Component>;
 
 struct ComponentManager {
-  first_free: usize,
-  entity_map: HashMap<EntityId, usize>,
-  components: Vec<Option<SomeComponent>>,
+  entity_map: HashMap<EntityId, SomeComponent>,
 }
 
 impl<'a> ComponentManager {
   pub fn new() -> Self {
     ComponentManager {
-      first_free: 0,
       entity_map: HashMap::new(),
-      components: vec![],
     }
   }
 
   pub fn get<T: Component>(&self, eid: &EntityId) -> Option<&T> {
-    if let Some(i) = self.entity_map.get(&eid) {
-      if let Some(component) = &self.components[*i] {
-        return downcast::<T>(component);
-      }
+    if let Some(component) = self.entity_map.get(&eid) {
+      return downcast::<T>(component);
     }
 
     None
   }
 
   pub fn get_mut<T: Component>(&mut self, eid: &EntityId) -> Option<&mut T> {
-    if let Some(i) = self.entity_map.get(&eid) {
-      if let Some(component) = &mut self.components[*i] {
-        return downcast_mut::<T>(component);
-      }
+    if let Some(component) = self.entity_map.get_mut(&eid) {
+      return downcast_mut::<T>(component);
     }
 
     None
   }
 
   pub fn add<T: Component>(&mut self, eid: &EntityId, component: T) {
-    let i = self.first_free;
-    self.components.insert(i, Some(Box::new(component)));
-    self.entity_map.insert(*eid, i);
-    self.first_free = self
-      .components
-      .iter()
-      .position(|c| c.is_none())
-      .unwrap_or(self.components.len())
+    self.entity_map.insert(*eid, Box::new(component));
   }
 
   pub fn remove(&mut self, eid: &EntityId) {
-    if let Some(i) = self.entity_map.remove(eid) {
-      self.components[i] = None;
-      if i < self.first_free {
-        self.first_free = i;
-      }
-    }
+    self.entity_map.remove(eid);
   }
 
   pub fn components<T: Component>(&self) -> Vec<&T> {
-    self
-      .components
-      .iter()
-      .filter_map(|c| c.as_ref())
-      .filter_map(downcast::<T>)
-      .collect()
+    self.entity_map.values().filter_map(downcast::<T>).collect()
   }
 
   pub fn entities(&self) -> Vec<&EntityId> {
