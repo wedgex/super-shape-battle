@@ -4,7 +4,6 @@ use ggez::{ContextBuilder, GameResult};
 
 mod components;
 mod entity;
-mod events;
 mod game;
 mod geometry;
 mod iter;
