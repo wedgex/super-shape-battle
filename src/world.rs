@@ -14,7 +14,7 @@ pub struct World {
   component_managers: HashMap<TypeId, ComponentManager>,
 }
 
-impl<'a> World {
+impl World {
   pub fn new() -> Self {
     let mut world = World {
       component_managers: HashMap::new(),
@@ -122,7 +122,7 @@ struct ComponentManager {
   entity_map: HashMap<EntityId, SomeComponent>,
 }
 
-impl<'a> ComponentManager {
+impl ComponentManager {
   pub fn new() -> Self {
     ComponentManager {
       entity_map: HashMap::new(),
